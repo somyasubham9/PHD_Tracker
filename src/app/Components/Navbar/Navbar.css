@@ -27,7 +27,7 @@
     top: 0;
     left: -100%;
     transition: 850ms;
-    overflow-y: scroll;
+    overflow-y: auto;
     z-index: 500;
   }
   

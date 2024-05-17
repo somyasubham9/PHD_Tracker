@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { HomePage } from "./app/Page/HomePage/HomePage";
+import HomePage  from "./app/Page/HomePage/HomePage";
 import Navbar from "./app/Components/Navbar";
 function App() {
 
@@ -11,7 +11,7 @@ function App() {
       <main className="pt-12">
       <Navbar/>
         <Routes>
-          <Route path="/home" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
         </Routes>
       </main>
     </Router>

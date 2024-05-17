@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 import { Link } from 'react-router-dom';
@@ -22,11 +22,23 @@ function Navbar() {
     console.log('Logout clicked');
     // Add logout functionality here
   };
+  let menuRef=useRef();
 
   const handleDelete = () => {
     console.log('Delete clicked');
     // Add delete functionality here
   };
+  useEffect(()=>{
+    let handler=(e)=>{
+      if(!menuRef.current.contains(e.target)){
+        setDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown',handler);
+    return ()=>{
+      document.removeEventListener('mousedown',handler);
+    }
+  })
 
   return (
     <>
@@ -37,7 +49,7 @@ function Navbar() {
           <div onClick={toggleDropdown}>
             <PiDotsThreeBold color='black' />
             {dropdown && (
-              <div className='dropdown-menu'>
+              <div className='dropdown-menu' ref={menuRef}>
                 <ul>
                   <li onClick={handleDelete}>
                   <CgProfile color='black'/>

@@ -5,6 +5,7 @@
     display: flex;
     justify-content: start;
     align-items: center;
+    z-index: 1000;
   }
   
   .menu-bars {
@@ -26,7 +27,8 @@
     top: 0;
     left: -100%;
     transition: 850ms;
-    overflow-y: auto;
+    overflow-y: scroll;
+    z-index: 500;
   }
   
   .nav-menu.active {

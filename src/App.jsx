@@ -1,19 +1,17 @@
 import { useState } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Form1ALayout from "./app/Page/Form1Page/Form1ALayout";
-
-
-
-
+import { HomePage } from "./app/Page/HomePage/HomePage";
+import Navbar from "./app/Components/Navbar";
 function App() {
 
 
   return (
     <Router>
       <main className="pt-12">
+      <Navbar/>
         <Routes>
-          <Route path="/" element={<Form1ALayout />} />
+          <Route path="/home" element={<HomePage />} />
         </Routes>
       </main>
     </Router>

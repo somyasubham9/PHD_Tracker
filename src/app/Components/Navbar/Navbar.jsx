@@ -10,10 +10,13 @@ import { IoIosLogOut } from "react-icons/io";
 
 import './Navbar.css';
 import { IconContext } from 'react-icons';
+import { AdminSidebarData } from './AdminSideBarData';
 
 function Navbar() {
   const [sidebar, setSidebar] = useState(false);
   const [dropdown, setDropdown] = useState(false);
+
+  const [isAdmin,setIsAdmin] = useState(true);
 
   const showSidebar = () => setSidebar(!sidebar);
   const toggleDropdown = () => setDropdown(!dropdown);
@@ -71,7 +74,17 @@ function Navbar() {
                 <AiIcons.AiOutlineClose color='black' />
               </Link>
             </li>
-            {SidebarData.map((item, index) => {
+            {!isAdmin && SidebarData.map((item, index) => {
+              return (
+                <li key={index} className={item.cName}>
+                  <Link to={item.path}>
+                    {item.icon}
+                    <span>{item.title}</span>
+                  </Link>
+                </li>
+              );
+            })}
+            {isAdmin && AdminSidebarData.map((item, index) => {
               return (
                 <li key={index} className={item.cName}>
                   <Link to={item.path}>

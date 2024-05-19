@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { AppConstants } from "constants/constants";
+import { AppConstants } from "../Constants/constants";
 
 export const userServicesApi = createApi({
   reducerPath: "userServicesApi",

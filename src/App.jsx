@@ -24,7 +24,6 @@ function App() {
   return (
     <Router>
       <main className="">
-
       <Navbar/>
         <Routes>
         <Route path="/studenlist" element={<StudentList />} />
@@ -45,6 +44,7 @@ function App() {
         <Route path="/profile" element={<ProfileLayout />} />
         <Route path="/auth" element={<AuthPage />} />
         </Routes>
+        </main>
     </Router>
   );
 }

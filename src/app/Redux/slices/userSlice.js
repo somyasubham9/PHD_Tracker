@@ -7,8 +7,8 @@ const initialState = {
   lastName: "",
   userEmail: "",
   userId: "",
-  status:"",
-  supervisor:"",
+  status: "",
+  supervisor: "",
   form1a_submitted: "",
   form1b_submitted: "",
   form2_submitted: "",
@@ -23,8 +23,8 @@ const initialState = {
   form5_submitted: "",
   form6_submitted: "",
   date_joined: "",
-  created_date:"",
-  updated_date:"",
+  created_date: "",
+  updated_date: "",
 };
 
 const user = createSlice({
@@ -33,6 +33,9 @@ const user = createSlice({
   reducers: {
     updateIsLoggedIn: (state, { payload }) => {
       state.isLoggedIn = payload;
+    },
+    updateIsAdmin: (state, { payload }) => {
+      state.isAdmin = payload;
     },
     updateUserEmail: (state, { payload }) => {
       state.userEmail = payload;
@@ -94,16 +97,28 @@ const user = createSlice({
     updateform6_submitted: (state, { payload }) => {
       state.form6_submitted = payload;
     },
+    updateDateJoined: (state, { payload }) => {
+      state.date_joined = payload;
+    },
+    updateCreatedDate: (state, { payload }) => {
+      state.created_date = payload;
+    },
+    updateUpdatedDate: (state, { payload }) => {
+      state.updated_date = payload;
+    },
+    updateOnLogout: () => initialState,
   },
 });
 
 export const {
   updateIsLoggedIn,
+  updateIsAdmin,
   updateFirstName,
-  updateLasttName,
+  updateLastName,
   updateUserEmail,
   updateUserId,
   updateStatus,
+  updateSupervisor,
   updateform1a_submitted,
   updateform1b_submitted,
   updateform1c_submitted,
@@ -118,5 +133,9 @@ export const {
   updateform4e_submitted,
   updateform5_submitted,
   updateform6_submitted,
+  updateDateJoined,
+  updateCreatedDate,
+  updateUpdatedDate,
+  updateOnLogout,
 } = user.actions;
 export default user.reducer;

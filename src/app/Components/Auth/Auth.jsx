@@ -3,6 +3,7 @@ import backgroundImage from "../../../assets/login.jpg";
 import {
   useUserRegisterMutation,
   useUserLoginMutation,
+  useUserUpdateMutation
 } from "../../Services/userServices";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -45,7 +46,7 @@ const AuthPage = () => {
   const [registerUser, registerUserResponse] = useUserRegisterMutation();
 
   const [loginUser, loginUserResponse] = useUserLoginMutation();
-
+  const [updateUser, updateUserResponse] = useUserUpdateMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -128,7 +129,8 @@ const AuthPage = () => {
     await registerUser(jsonData).then((res) => {
       console.log(res);
     });
-
+    const updateData = {status: "Student"}
+    await updateUser()
     console.log("Handling signup");
     // Add your signup logic here
   };

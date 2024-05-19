@@ -18,6 +18,18 @@ export const userServicesApi = createApi({
       }),
     }),
 
+    userUpdate: builder.mutation({
+      query: (body, id) => ({
+        url: `${AppConstants.endPoints.updateUser}/${id}`,
+        method: "PATCH",
+        body: body,
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+           Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+        },
+      }),
+    }),
+
     userLogin: builder.mutation({
       query: (body) => ({
         url: AppConstants.endPoints.login,
@@ -40,5 +52,5 @@ export const userServicesApi = createApi({
   }),
 });
 
-export const { useUserRegisterMutation, useUserLoginMutation } =
+export const { useUserRegisterMutation, useUserLoginMutation, useUserUpdateMutation } =
   userServicesApi;

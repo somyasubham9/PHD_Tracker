@@ -27,17 +27,23 @@ function Navbar() {
   const navigate = useNavigate();
 
   const initialState = useSelector((state) => state.user);
+  
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("access");
-    sessionStorage.removeItem("refresh");
-    dispatch(updateIsLoggedIn(false));
-    dispatch(updateOnLogout());
-    console.log(initialState);
-    console.log('Loggin outttt');
+const handleLogout = () => {
+  sessionStorage.removeItem("access");
+  sessionStorage.removeItem("refresh");
+  dispatch(updateIsLoggedIn(false));
+  dispatch(updateOnLogout());
+};
+  
+  useEffect(() => {
+  if (!initialState.isLoggedIn) {
+    console.log('Navigating to /auth...');
     navigate('/auth');
-    console.log('Logged outttt');
-  };
+  }
+}, [initialState.isLoggedIn, navigate]);
+
+
 
   let menuRef = useRef();
 

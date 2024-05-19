@@ -18,7 +18,6 @@ import {
   updateStatus,
   updateform1a_submitted,
   updateform1b_submitted,
-  updateform1c_submitted,
   updateform2_submitted,
   updateform3a_submitted,
   updateform3b_submitted,
@@ -59,6 +58,7 @@ const AuthPage = () => {
     if (loginUserResponse.isSuccess) {
       sessionStorage.setItem("access", loginUserResponse.data.access);
       sessionStorage.setItem("refresh", loginUserResponse.data.refresh);
+    //   console.log(loginUserResponse);
       dispatch(updateIsLoggedIn(true));
       dispatch(updateCreatedDate(loginUserResponse.data.user.created_at));
       dispatch(updateUpdatedDate(loginUserResponse.data.user.updated_at));
@@ -73,7 +73,6 @@ const AuthPage = () => {
       // Assuming form submission statuses are included in the response
       dispatch(updateform1a_submitted(loginUserResponse.data.user.form1a_submitted));
       dispatch(updateform1b_submitted(loginUserResponse.data.user.form1b_submitted));
-      dispatch(updateform1c_submitted(loginUserResponse.data.user.form1c_submitted));
       dispatch(updateform2_submitted(loginUserResponse.data.user.form2_submitted));
       dispatch(updateform3a_submitted(loginUserResponse.data.user.form3a_submitted));
       dispatch(updateform3b_submitted(loginUserResponse.data.user.form3b_submitted));

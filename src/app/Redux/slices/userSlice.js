@@ -65,9 +65,6 @@ const user = createSlice({
     updateform1b_submitted: (state, { payload }) => {
       state.form1b_submitted = payload;
     },
-    updateform1c_submitted: (state, { payload }) => {
-      state.form1c_submitted = payload;
-    },
     updateform2_submitted: (state, { payload }) => {
       state.form2_submitted = payload;
     },
@@ -126,7 +123,6 @@ export const {
   updateSupervisor,
   updateform1a_submitted,
   updateform1b_submitted,
-  updateform1c_submitted,
   updateform2_submitted,
   updateform3a_submitted,
   updateform3b_submitted,

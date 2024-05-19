@@ -18,6 +18,7 @@ export const formServicesApi = createApi({
         },
       }),
     }),
+
     form1BSubmit: builder.mutation({
       query: (body) => ({
         url: AppConstants.endPoints.form1BSubmit,
@@ -29,8 +30,21 @@ export const formServicesApi = createApi({
         },
       }),
     }),
+
+    form6Submit: builder.mutation({
+      query: (body) => ({
+        url: AppConstants.endPoints.form6Submit, // Update this endpoint according to your API
+        method: "POST",
+        body: body,
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+        },
+      }),
+    }),
+
   }),
 });
 
-export const { useForm1ASubmitMutation,useForm1BSubmitMutation } =
+export const { useForm1ASubmitMutation,useForm1BSubmitMutation, useForm6SubmitMutation } =
   formServicesApi;

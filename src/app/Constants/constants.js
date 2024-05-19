@@ -8,6 +8,7 @@ export const AppConstants = {
     updateUser: "user",
     userProfile: "profile",
     form1ASubmit:'form1A/user/',
-    form1BSubmit:'form1B/user/',
+    form1BSubmit: 'form1B/user/',
+    form6Submit:'form6/user/'
   },
 };

@@ -57,8 +57,8 @@ const AuthPage = () => {
     }
 
     if (loginUserResponse.isSuccess) {
-      sessionStorage.setItem("access", loginUserResponse.data.access_token);
-      sessionStorage.setItem("refresh", loginUserResponse.data.refresh_token);
+      sessionStorage.setItem("access", loginUserResponse.data.access);
+      sessionStorage.setItem("refresh", loginUserResponse.data.refresh);
       dispatch(updateIsLoggedIn(true));
       dispatch(updateCreatedDate(loginUserResponse.data.user.created_at));
       dispatch(updateUpdatedDate(loginUserResponse.data.user.updated_at));
@@ -129,7 +129,6 @@ const AuthPage = () => {
     await registerUser(jsonData).then((res) => {
       console.log(res);
     });
-    const updateData = {status: "Student"}
     await updateUser()
     console.log("Handling signup");
     // Add your signup logic here

@@ -36,12 +36,12 @@ const handleLogout = () => {
   dispatch(updateOnLogout());
 };
   
-  useEffect(() => {
-  if (!initialState.isLoggedIn) {
-    console.log('Navigating to /auth...');
-    navigate('/auth');
-  }
-}, [initialState.isLoggedIn, navigate]);
+//   useEffect(() => {
+//   if (!initialState.isLoggedIn) {
+//     console.log('Navigating to /auth...');
+//     navigate('/auth');
+//   }
+// }, [initialState.isLoggedIn]);
 
 
 
@@ -78,7 +78,7 @@ const handleLogout = () => {
                       <CgProfile color="black" />
                       <span>Profile</span>
                     </li>
-                    <li onClick={handleLogout}>
+                    <li onClick={() => handleLogout}>
                       <IoIosLogOut color="black" />
                       <span>Logout</span>
                     </li>

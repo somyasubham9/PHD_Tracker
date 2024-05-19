@@ -5,6 +5,7 @@ export const AppConstants = {
     login: "login/",
     convertToken: "user-covert-token",
     // logout: "auth/logout/",
+    updateUser: "user",
     userProfile: "profile",
   },
 };

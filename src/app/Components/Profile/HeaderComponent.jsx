@@ -1,6 +1,35 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { updateAreaOfResearch } from "../../Redux/slices/userSlice"
+import {
+  useUserUpdateMutation
+} from "../../Services/userServices";
 
 const SocialProfile = () => {
+  const initialState = useSelector((state) => state.user);
+  const [editMode, setEditMode] = useState(false);
+  const [researchArea, setResearchArea] = useState(initialState.areaOfResearch || '');
+  
+  const [updateUser, updateUserResponse] = useUserUpdateMutation();
+
+  const handleSave = async () => {
+    try {
+      console.log(researchArea)
+      console.log(initialState.userId);
+      const result = await updateUser({ area_of_research: researchArea }, initialState.userId);
+      if (result.error) {
+        console.log('Error updating user:', result.error);
+      } else {
+        dispatch(updateAreaOfResearch(researchArea));
+        setEditMode(false);
+        console.log('Updated successfully!');
+      }
+    } catch (error) {
+      console.error('Failed to update:', error);
+    }
+  };
+  console.log(initialState);
   return (
     <div className="h-screen w-full">
       {/* Cover and Profile Image */}
@@ -19,8 +48,8 @@ const SocialProfile = () => {
       
       {/* Profile Details */}
       <div className="px-4 pt-32 pb-6 bg-white shadow-xl rounded-lg mx-auto mt-6 lg:mt-4">
-        <h1 className="text-4xl font-bold text-center mb-4 text-blue-700">Jake Harper</h1>
-        <p className="text-center text-lg text-gray-600">jake@gmail.com</p>
+        <h1 className="text-4xl font-bold text-center mb-4 text-blue-700">{initialState.firstName + " " +initialState.lastName}</h1>
+        <p className="text-center text-lg text-gray-600">{initialState.userEmail}</p>
         <p className="text-center text-gray-600 mt-1">Bachelor of IT</p>
         
         <div className="flex justify-center space-x-6 mt-4">
@@ -29,12 +58,24 @@ const SocialProfile = () => {
         </div>
 
         <div className="mt-6 px-6">
-          <h3 className="text-2xl md:text-2xl lg:text-4xl font-semibold text-gray-700">Areas Of Research</h3>
+        <h3 className="text-2xl md:text-2xl lg:text-4xl font-semibold text-gray-700">Areas Of Research</h3>
+        {editMode ? (
+          <textarea
+            className="text-md md:text-lg lg:text-xl text-gray-800 mt-2 leading-relaxed"
+            value={researchArea}
+            onChange={(e) => setResearchArea(e.target.value)}
+          />
+        ) : (
           <p className="text-md md:text-lg lg:text-xl text-gray-800 mt-2 leading-relaxed">
-            Jake is a passionate tech enthusiast and Bachelor of IT graduate from Life Partners University. 
-            He is currently working as the CBO at Life Partners, focusing on innovative tech solutions.
+            {researchArea}
           </p>
-        </div>
+        )}
+        {editMode ? (
+          <button onClick={handleSave} className="px-4 py-2 bg-blue-500 text-white rounded">Save</button>
+        ) : (
+          <button onClick={() => setEditMode(true)} className="px-4 py-2 bg-green-500 text-white rounded">Edit</button>
+        )}
+      </div>
       </div>
     </div>
   );

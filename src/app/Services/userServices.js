@@ -19,16 +19,21 @@ export const userServicesApi = createApi({
     }),
 
     userUpdate: builder.mutation({
-      query: (body, id) => ({
-        url: `${AppConstants.endPoints.updateUser}/${id}`,
-        method: "PATCH",
-        body: body,
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-           Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+      query: (body, id) => {
+        console.log(body, id);
+            console.log(`Making PATCH request to: ${AppConstants.endPoints.updateUser}/${id}`);
+            return {
+                url: `${AppConstants.endPoints.updateUser}/${id}`,
+                method: "PATCH",
+                body: body,
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+                },
+            };
         },
-      }),
     }),
+
 
     userLogin: builder.mutation({
       query: (body) => ({

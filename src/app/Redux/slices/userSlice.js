@@ -55,6 +55,10 @@ const user = createSlice({
     updateSupervisor: (state, { payload }) => {
       state.supervisor = payload;
     },
+    updateAreaOfResearch: (state, { payload }) => {
+      state.areaOfResearch = payload;
+    },
+
     updateform1a_submitted: (state, { payload }) => {
       state.form1a_submitted = payload;
     },
@@ -118,6 +122,7 @@ export const {
   updateUserEmail,
   updateUserId,
   updateStatus,
+  updateAreaOfResearch,
   updateSupervisor,
   updateform1a_submitted,
   updateform1b_submitted,

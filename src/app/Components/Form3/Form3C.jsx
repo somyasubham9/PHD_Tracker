@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+import { useForm3CSubmitMutation } from '../../Services/formService';
 
 const Form3C = () => {
   const [scholarName, setScholarName] = useState('');
-  const [rollNoAndBranch, setRollNoAndBranch] = useState('');
+  const [rollNo, setRollNo] = useState('');
+  const [branch, setBranch] = useState('');
   const [dateOfSeminar, setDateOfSeminar] = useState('');
   const [topicOfTheTalk, setTopicOfTheTalk] = useState('');
   const [progress, setProgress] = useState('');
   const [committeeMembers, setCommitteeMembers] = useState(Array(6).fill({ name: '', remarks: '', signature: '' }));
+
+  const [form3cSubmit,form3cSubmitResponse]=useForm3CSubmitMutation();
 
   const handleMemberChange = (index, field, value) => {
     const updatedMembers = [...committeeMembers];
@@ -14,18 +18,27 @@ const Form3C = () => {
     setCommitteeMembers(updatedMembers);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = {
-      scholarName,
-      rollNoAndBranch,
-      dateOfSeminar,
-      topicOfTheTalk,
-      progress,
-      committeeMembers
+      name:scholarName,
+      rollno:rollNo,
+      branch:branch,
+      date_of_seminar:dateOfSeminar,
+      topic_of_talk:topicOfTheTalk,
+      progress:progress,
+      committees:committeeMembers,
     };
+
+    try {
+      const response = await form3cSubmit(formData);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit form.");
+    }
+
     console.log(formData); // Replace this with your actual form submission logic
-    alert('Form submitted. Check the console for the data!');
   };
 
   return (
@@ -39,10 +52,17 @@ const Form3C = () => {
                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
         </div>
 
-        <div>
-          <label htmlFor="rollNoAndBranch" className="block text-sm font-medium text-gray-700">Roll No. & Branch:</label>
-          <input type="text" id="rollNoAndBranch" value={rollNoAndBranch} onChange={e => setRollNoAndBranch(e.target.value)}
-                 className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
+        <div className='flex w-full gap-8'>
+          <div className='w-1/2'>
+            <label htmlFor="rollNo" className="block text-sm font-medium text-gray-700">Roll No.:</label>
+            <input type="text" id="rollNo" value={rollNo} onChange={e => setRollNo(e.target.value)}
+                   className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
+          </div>
+          <div className='w-1/2'>
+            <label htmlFor="branch" className="block text-sm font-medium text-gray-700">Branch:</label>
+            <input type="text" id="branch" value={branch} onChange={e => setBranch(e.target.value)}
+                   className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
+          </div>
         </div>
 
         <div>

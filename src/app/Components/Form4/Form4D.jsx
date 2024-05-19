@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useForm4DSubmitMutation } from '../../Services/formService';
 
 const Form4D = () => {
+const [form4dSubmit,form4dSubmitResponse]=useForm4DSubmitMutation();
+
   const [certifications, setCertifications] = useState({
     noJointPublication: false,
     notSupervisor: false,
@@ -11,9 +14,16 @@ const Form4D = () => {
     setCertifications(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
     event.preventDefault();
-    console.log(certifications); // This would be where you handle the submission, e.g., sending to an API
+    const formData={}
+    try {
+      const response = await form4dSubmit(formData);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit form.");
+    }
     alert('Conflict of Interest form submitted. Check the console for the data!');
   };
 

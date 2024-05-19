@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useForm3BSubmitMutation } from '../../Services/formService';
 
 const Form3B = () => {
   const [fullName, setFullName] = useState('');
@@ -15,24 +16,32 @@ const Form3B = () => {
   const [stayPeriodFrom, setStayPeriodFrom] = useState('');
   const [stayPeriodTo, setStayPeriodTo] = useState('');
 
-  const handleSubmit = (event) => {
+  const [form3bSubmit,form3bSubmitResponse]=useForm3BSubmitMutation();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = {
-      fullName,
-      semester,
-      session,
-      rollNo,
-      category,
-      dateOfEnrolment,
-      department,
-      registrationComplete,
-      permanentAddress,
-      feeDate,
-      broadAreaOfResearch,
-      stayPeriod: `${stayPeriodFrom} to ${stayPeriodTo}`
+      name:fullName,
+      semester:semester,
+      session:session,
+      rollno:rollNo,
+      category:category,
+      date_of_enrolment:dateOfEnrolment,
+      department:department,
+      is_registration_completed:registrationComplete,
+      permanent_address:permanentAddress,
+      fees_date:feeDate,
+      area_of_research:broadAreaOfResearch,
+      institute_stay_date_from:stayPeriodFrom,
+      institute_stay_date_to:stayPeriodTo,
     };
-    console.log(formData); // Replace this with your actual form submission logic
-    alert('Form submitted. Check the console for the data!');
+    try {
+      const response = await form3bSubmit(formData);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit form.");
+    }
   };
 
   return (

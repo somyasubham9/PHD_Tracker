@@ -1,25 +1,34 @@
 import React, { useState } from 'react';
+import { useForm5SubmitMutation } from '../../Services/formService';
 
 const Form5 = () => {
   const [candidateDetails, setCandidateDetails] = useState({
     name: '',
-    rollNo: '',
-    title: ''
+    rollno: '',
+    title_of_thesis: ''
   });
   const [recommendation, setRecommendation] = useState('');
+
+const [form5Submit,form5SubmitResponse]=useForm5SubmitMutation();
 
   const handleInputChange = (field, value) => {
     setCandidateDetails({ ...candidateDetails, [field]: value });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
     event.preventDefault();
     const formData = {
       ...candidateDetails,
       recommendation
     };
     console.log(formData); // Ideally send this to an API
-    alert('Recommendation submitted. Check the console for details!');
+    try {
+      const response = await form5Submit(formData);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit form.");
+    }
   };
 
   return (
@@ -36,14 +45,14 @@ const Form5 = () => {
 
         <div>
           <label htmlFor="rollNo" className="block text-sm font-medium text-gray-700">Roll No:</label>
-          <input type="text" id="rollNo" value={candidateDetails.rollNo}
+          <input type="text" id="rollNo" value={candidateDetails.rollno}
                  onChange={(e) => handleInputChange('rollNo', e.target.value)}
                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
         </div>
 
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title of the thesis:</label>
-          <input type="text" id="title" value={candidateDetails.title}
+          <input type="text" id="title" value={candidateDetails.title_of_thesis}
                  onChange={(e) => handleInputChange('title', e.target.value)}
                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
         </div>

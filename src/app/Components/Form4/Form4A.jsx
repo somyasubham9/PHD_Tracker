@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useForm4ASubmitMutation } from '../../Services/formService';
 
 const Form4A = () => {
   const [scholarName, setScholarName] = useState('');
@@ -6,22 +7,29 @@ const Form4A = () => {
   const [department, setDepartment] = useState('');
   const [committeeMembers, setCommitteeMembers] = useState(Array(5).fill({ name: '', signature: '' }));
 
+  const [form4aSubmit,form4aSubmitResponse]=useForm4ASubmitMutation();
+
   const handleMemberChange = (index, field, value) => {
     const updatedMembers = [...committeeMembers];
     updatedMembers[index] = { ...updatedMembers[index], [field]: value };
     setCommitteeMembers(updatedMembers);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = {
-      scholarName,
-      rollNo,
-      department,
-      committeeMembers
+      name:scholarName,
+      rollno:rollNo,
+      depaartment:department,
+      committees:committeeMembers
     };
-    console.log(formData); // Replace this with your actual form submission logic
-    alert('Form submitted. Check the console for the data!');
+    try {
+      const response = await form4aSubmit(formData);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit form.");
+    }
   };
     
     const synopsisSubmissionParagraph = `

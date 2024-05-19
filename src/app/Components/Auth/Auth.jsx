@@ -16,6 +16,7 @@ import {
   updateSupervisor,
   updateUserId,
   updateStatus,
+  updateDepartment,
   updateform1a_submitted,
   updateform1b_submitted,
   updateform2_submitted,
@@ -41,6 +42,7 @@ const AuthPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [department,setDepartment]=useState("");
 
   const [registerUser, registerUserResponse] = useUserRegisterMutation();
 
@@ -68,6 +70,7 @@ const AuthPage = () => {
       dispatch(updateUserEmail(loginUserResponse.data.user.email));
       dispatch(updateUserId(loginUserResponse.data.user.id));
       dispatch(updateStatus(loginUserResponse.data.user.status));
+      dispatch(updateDepartment(loginUserResponse.data.user.department));
       dispatch(updateSupervisor(loginUserResponse.data.user.supervisor));
 
       // Assuming form submission statuses are included in the response
@@ -122,13 +125,13 @@ const AuthPage = () => {
     formData.append("last_name", lastName);
     formData.append("email", email);
     formData.append("password", password);
+    formData.append("department", department);
 
     const jsonData = Object.fromEntries(formData.entries());
 
     await registerUser(jsonData).then((res) => {
       console.log(res);
     });
-    await updateUser()
     console.log("Handling signup");
     // Add your signup logic here
   };
@@ -173,6 +176,16 @@ const AuthPage = () => {
                   className="w-full px-4 py-3 border rounded"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="mt-6">
+                <input
+                  type="text"
+                  placeholder="Enter your Department"
+                  className="w-full px-4 py-3 border rounded"
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
                   required
                 />
               </div>

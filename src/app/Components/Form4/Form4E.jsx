@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useForm4ESubmitMutation } from '../../Services/formService';
 
 const Form4E = () => {
+ const [form4eSubmit,form4eSubmitResponse]=useForm4ESubmitMutation();
+
   const [manuscriptDetails, setManuscriptDetails] = useState([{
     authors: '',
     title: '',
@@ -22,10 +25,18 @@ const Form4E = () => {
     setManuscriptDetails([...manuscriptDetails, { authors: '', title: '', journalName: '', volumeInfo: '' }]);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
     event.preventDefault();
-    console.log(manuscriptDetails); // For now, we log to the console; replace with API call as needed
-    alert('Manuscript details submitted. Check the console for data!');
+    try {
+      const formData={
+        
+      }
+      const response = await form4eSubmit(formData);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit form.");
+    }
   };
 
   return (

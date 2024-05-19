@@ -18,7 +18,7 @@ function Navbar() {
   const [sidebar, setSidebar] = useState(false);
   const [dropdown, setDropdown] = useState(false);
 
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
   const toggleDropdown = () => setDropdown(!dropdown);
@@ -36,12 +36,12 @@ const handleLogout = () => {
   dispatch(updateOnLogout());
 };
   
-  useEffect(() => {
-  if (!initialState.isLoggedIn) {
-    console.log('Navigating to /auth...');
-    navigate('/auth');
-  }
-}, [initialState.isLoggedIn, navigate]);
+//   useEffect(() => {
+//   if (!initialState.isLoggedIn) {
+//     console.log('Navigating to /auth...');
+//     navigate('/auth');
+//   }
+// }, [initialState.isLoggedIn, navigate]);
 
 
 

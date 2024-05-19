@@ -6,5 +6,6 @@ export const AppConstants = {
     convertToken: "user-covert-token",
     // logout: "auth/logout/",
     userProfile: "profile",
+    form1ASubmit:'form1A/user/'
   },
 };

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import HomePage  from "./app/Page/HomePage/HomePage";
-import Navbar from "./app/Components/Navbar/Navbar";
 import Form1ALayout from "./app/Page/Form1Page/Form1ALayout";
 import Form1BLayout from "./app/Page/Form1Page/Form1BLayout";
 import Form2Layout from "./app/Page/Form2Page/Form2Layout";
@@ -19,14 +18,17 @@ import Form5Layout from "./app/Page/Form5Page/Form5Layout";
 import Form6Layout from "./app/Page/Form6Page/Form6Layout";
 import ProfileLayout from "./app/Page/ProfileLayout";
 import AuthPage from "./app/Components/Auth/Auth";
+import LayoutWithNavbar from "./app/Components/NavBarLayout";
 
 function App() {
+
   return (
     <Router>
       <main className="">
-      <Navbar/>
+
+      <LayoutWithNavbar />
         <Routes>
-        <Route path="/studenlist" element={<StudentList />} />
+        <Route path="/studentlist" element={<StudentList />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/form1A" element={<Form1ALayout />} />
         <Route path="/form1B" element={<Form1BLayout />} />

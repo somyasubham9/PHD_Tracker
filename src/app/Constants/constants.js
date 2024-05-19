@@ -7,6 +7,7 @@ export const AppConstants = {
     // logout: "auth/logout/",
     updateUser: "user",
     userProfile: "profile",
-    form1ASubmit:'form1A/user/'
+    form1ASubmit:'form1A/user/',
+    form1BSubmit:'form1B/user/',
   },
 };

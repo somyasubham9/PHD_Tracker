@@ -16,7 +16,7 @@ const SocialProfile = () => {
   const handleSave = async () => {
     try {
       console.log(researchArea)
-      console.log(initialState.userId);
+      console.log(typeof(initialState.userId));
       const result = await updateUser({ area_of_research: researchArea }, initialState.userId);
       if (result.error) {
         console.log('Error updating user:', result.error);

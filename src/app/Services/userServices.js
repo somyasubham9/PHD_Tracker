@@ -20,7 +20,7 @@ export const userServicesApi = createApi({
 
     userUpdate: builder.mutation({
       query: (body, id) => {
-        console.log(body, id);
+        console.log(body, typeof(id));
             console.log(`Making PATCH request to: ${AppConstants.endPoints.updateUser}/${id}`);
             return {
                 url: `${AppConstants.endPoints.updateUser}/${id}`,

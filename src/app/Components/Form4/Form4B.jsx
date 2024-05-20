@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm4BSubmitMutation } from '../../Services/formService';
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Form4B = () => {
+  const initialState = useSelector((state) => state.user);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const [scholarName, setScholarName] = useState('');
   const [department, setDepartment] = useState('');
   const [rollNo, setRollNo] = useState('');
   const [submissionDate, setSubmissionDate] = useState('');
-  const [committeeMembers, setCommitteeMembers] = useState(Array(5).fill({ name: '', signature: '' }));
+  const [committeeMembers, setCommitteeMembers] = useState(Array(5).fill({ name: '' }));
 
   const [form4bSubmit,form4bSubmitResponse]=useForm4BSubmitMutation();
 
@@ -15,6 +20,40 @@ const Form4B = () => {
     updatedMembers[index] = { ...updatedMembers[index], [field]: value };
     setCommitteeMembers(updatedMembers);
   };
+
+  useEffect(() => {
+    const getForm4BData = async () => {
+      const token = sessionStorage.getItem("access");
+      if (!token) {
+        console.error("No access token found in session storage");
+        return;
+      }
+
+      try {
+        console.log(initialState.userId);
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/form4B/user/${initialState.userId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = res.data.data;
+        setScholarName(data.name);
+        setRollNo(data.rollno);
+        setDepartment(data.department);
+        setSubmissionDate(data.thesis_date);
+        setCommitteeMembers(data.committee);
+
+        setIsSubmitted(true);
+      } catch (error) {
+        // console.error('Error fetching data:', error.response ? error.response.data : error.message);
+      }
+    };
+    getForm4BData();
+  }, [initialState.userId, isSubmitted]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -28,6 +67,7 @@ const Form4B = () => {
     try {
       const response = await form4bSubmit(formData);
       console.log(response);
+      setIsSubmitted(true);
     } catch (error) {
       console.error(error);
       alert("Failed to submit form.");
@@ -48,25 +88,25 @@ credits. The DSC is satisfied that he/she can submit the thesis in three months 
         
         <div>
           <label htmlFor="scholarName" className="block text-sm font-medium text-gray-700">Name of the Scholar:</label>
-          <input type="text" id="scholarName" value={scholarName} onChange={e => setScholarName(e.target.value)}
+          <input readOnly={isSubmitted} type="text" id="scholarName" value={scholarName} onChange={e => setScholarName(e.target.value)}
                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
         </div>
 
         <div>
           <label htmlFor="department" className="block text-sm font-medium text-gray-700">Department:</label>
-          <input type="text" id="department" value={department} onChange={e => setDepartment(e.target.value)}
+          <input readOnly={isSubmitted} type="text" id="department" value={department} onChange={e => setDepartment(e.target.value)}
                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
         </div>
 
         <div>
           <label htmlFor="rollNo" className="block text-sm font-medium text-gray-700">Roll No.:</label>
-          <input type="text" id="rollNo" value={rollNo} onChange={e => setRollNo(e.target.value)}
+          <input readOnly={isSubmitted} type="text" id="rollNo" value={rollNo} onChange={e => setRollNo(e.target.value)}
                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
         </div>
 
         <div>
           <label htmlFor="submissionDate" className="block text-sm font-medium text-gray-700">Effective Date of Thesis Submission:</label>
-          <input type="date" id="submissionDate" value={submissionDate} onChange={e => setSubmissionDate(e.target.value)}
+          <input readOnly={isSubmitted} type="date" id="submissionDate" value={submissionDate} onChange={e => setSubmissionDate(e.target.value)}
                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
         </div>
 
@@ -74,10 +114,8 @@ credits. The DSC is satisfied that he/she can submit the thesis in three months 
           <h3 className="text-lg font-medium text-gray-700">Signature of Doctoral Scrutiny Committee Members:</h3>
           {committeeMembers.map((member, index) => (
             <div key={index} className="grid grid-cols-3 gap-4 mb-2">
-              <input type="text" placeholder="Name" value={member.name} onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
+              <input readOnly={isSubmitted} type="text" placeholder="Name" value={member.name} onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
                      className="col-span-1 p-2 border border-gray-300 rounded-md shadow-sm"/>
-              <input type="text" placeholder="Signature" value={member.signature} onChange={(e) => handleMemberChange(index, 'signature', e.target.value)}
-                     className="col-span-2 p-2 border border-gray-300 rounded-md shadow-sm"/>
             </div>
           ))}
         </div>
@@ -86,9 +124,14 @@ credits. The DSC is satisfied that he/she can submit the thesis in three months 
             </div>      
 
         <div>
-          <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            Submit
-          </button>
+        {(!isSubmitted && 
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Submit
+            </button>
+          )}
         </div>
       </form>
     </div>

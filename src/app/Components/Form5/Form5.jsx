@@ -7,19 +7,35 @@ const Form5 = () => {
     rollno: '',
     title_of_thesis: ''
   });
-  const [recommendation, setRecommendation] = useState('');
+  const [recommendations, setRecommendations] = useState({
+    is_academic_standard: false,
+    is_viva: false,
+    is_modification: false,
+    is_modification_final: false,
+    is_rejected: false,
+  });
 
-const [form5Submit,form5SubmitResponse]=useForm5SubmitMutation();
+  const [form5Submit, form5SubmitResponse] = useForm5SubmitMutation();
 
   const handleInputChange = (field, value) => {
     setCandidateDetails({ ...candidateDetails, [field]: value });
+  };
+
+  const handleRadioChange = (field) => {
+    setRecommendations({
+      is_academic_standard: field === 'is_academic_standard',
+      is_viva: field === 'is_viva',
+      is_modification: field === 'is_modification',
+      is_modification_final: field === 'is_modification_final',
+      is_rejected: field === 'is_rejected',
+    });
   };
 
   const handleSubmit = async(event) => {
     event.preventDefault();
     const formData = {
       ...candidateDetails,
-      recommendation
+      ...recommendations,
     };
     console.log(formData); // Ideally send this to an API
     try {
@@ -46,34 +62,59 @@ const [form5Submit,form5SubmitResponse]=useForm5SubmitMutation();
         <div>
           <label htmlFor="rollNo" className="block text-sm font-medium text-gray-700">Roll No:</label>
           <input type="text" id="rollNo" value={candidateDetails.rollno}
-                 onChange={(e) => handleInputChange('rollNo', e.target.value)}
+                 onChange={(e) => handleInputChange('rollno', e.target.value)}
                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
         </div>
 
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title of the thesis:</label>
           <input type="text" id="title" value={candidateDetails.title_of_thesis}
-                 onChange={(e) => handleInputChange('title', e.target.value)}
+                 onChange={(e) => handleInputChange('title_of_thesis', e.target.value)}
                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
         </div>
 
         <fieldset className="space-y-2">
           <legend className="text-sm font-medium text-gray-700">Recommendations:</legend>
-          {[
-            "The thesis meets the academic standard of institutions of higher learning around the world. It may be accepted for award of the Ph.D. degree in its present form.",
-            "The thesis is acceptable subject to clarification of certain points at the time of viva-voce. (List of points enclosed)",
-            "The thesis is acceptable subject to modification / clarification / revision, as per enclosed details. After modification the thesis need NOT be referred back to me.",
-            "The thesis is acceptable subject to further work/modification/substantial revision of text, as per enclosed details. After modification the thesis should be referred back to me for final assessment.",
-            "The thesis does not meet the standards of comparable works in institutions of higher learning it is rejected."
-          ].map((option, index) => (
-            <label key={index} className="flex items-start">
-              <input type="radio" name="recommendation" value={option}
-                     onChange={() => setRecommendation(option)}
-                     checked={recommendation === option}
-                     className="form-radio h-5 w-5 text-blue-600 mt-0.5"/>
-              <span className="ml-2 text-gray-700">{option}</span>
-            </label>
-          ))}
+          <label className="flex items-start">
+            <input type="radio" name="recommendations" value="is_academic_standard" checked={recommendations.is_academic_standard}
+                   onChange={() => handleRadioChange('is_academic_standard')}
+                   className="form-radio h-5 w-5 text-blue-600 mt-0.5"/>
+            <span className="ml-2 text-gray-700">
+              The thesis meets the academic standard of institutions of higher learning around the world. It may be accepted for award of the Ph.D. degree in its present form.
+            </span>
+          </label>
+          <label className="flex items-start">
+            <input type="radio" name="recommendations" value="is_viva" checked={recommendations.is_viva}
+                   onChange={() => handleRadioChange('is_viva')}
+                   className="form-radio h-5 w-5 text-blue-600 mt-0.5"/>
+            <span className="ml-2 text-gray-700">
+              The thesis is acceptable subject to clarification of certain points at the time of viva-voce. (List of points enclosed)
+            </span>
+          </label>
+          <label className="flex items-start">
+            <input type="radio" name="recommendations" value="is_modification" checked={recommendations.is_modification}
+                   onChange={() => handleRadioChange('is_modification')}
+                   className="form-radio h-5 w-5 text-blue-600 mt-0.5"/>
+            <span className="ml-2 text-gray-700">
+              The thesis is acceptable subject to modification / clarification / revision, as per enclosed details. After modification the thesis need NOT be referred back to me.
+            </span>
+          </label>
+          <label className="flex items-start">
+            <input type="radio" name="recommendations" value="is_modification_final" checked={recommendations.is_modification_final}
+                   onChange={() => handleRadioChange('is_modification_final')}
+                   className="form-radio h-5 w-5 text-blue-600 mt-0.5"/>
+            <span className="ml-2 text-gray-700">
+              The thesis is acceptable subject to further work/modification/substantial revision of text, as per enclosed details. After modification the thesis should be referred back to me for final assessment.
+            </span>
+          </label>
+          <label className="flex items-start">
+            <input type="radio" name="recommendations" value="is_rejected" checked={recommendations.is_rejected}
+                   onChange={() => handleRadioChange('is_rejected')}
+                   className="form-radio h-5 w-5 text-blue-600 mt-0.5"/>
+            <span className="ml-2 text-gray-700">
+              The thesis does not meet the standards of comparable works in institutions of higher learning it is rejected.
+            </span>
+          </label>
         </fieldset>
 
         <div>

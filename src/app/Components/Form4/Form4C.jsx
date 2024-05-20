@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+import { useForm4CSubmitMutation } from '../../Services/formService';
 
 const Form4C = () => {
+  const [form4cSubmit,form4cSubmitResponse]=useForm4CSubmitMutation();
+  const [committeeMembers, setCommitteeMembers] = useState(Array(5).fill({ name: '', signature: '' }));
   const [candidateDetails, setCandidateDetails] = useState({
-    date: '',
     name: '',
-    rollNo: '',
+    rollno: '',
     department: '',
-    dateOfRegistration: '',
-    titleOfThesis: '',
+    date_of_registeration: '',
+    title_of_thesis: '',
     degree: '',
-    supervisors: ''
+    supervisor: ''
   });
 
   const [indianExaminers, setIndianExaminers] = useState([{
@@ -32,6 +34,13 @@ const Form4C = () => {
     emailId: ''
   }]);
 
+  const handleMemberChange = (index, field, value) => {
+    const updatedMembers = [...committeeMembers];
+    updatedMembers[index] = { ...updatedMembers[index], [field]: value };
+    setCommitteeMembers(updatedMembers);
+  };
+
+
   const handleCandidateChange = (field, value) => {
     setCandidateDetails({ ...candidateDetails, [field]: value });
   };
@@ -42,28 +51,22 @@ const Form4C = () => {
     list === 'indian' ? setIndianExaminers(updatedList) : setForeignExaminers(updatedList);
   };
 
-  const addExaminer = (list) => {
-    const newExaminer = {
-      name: '',
-      designation: '',
-      institute: '',
-      areasOfInterest: '',
-      postalAddress: '',
-      phoneNo: '',
-      emailId: ''
-    };
-    list === 'indian' ? setIndianExaminers([...indianExaminers, newExaminer]) : setForeignExaminers([...foreignExaminers, newExaminer]);
-  };
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = {
-      candidateDetails,
-      indianExaminers,
-      foreignExaminers
+      ...candidateDetails,
+      // Here we have to pass examiner id and foreign id instead of object
+      indian_examiner_id:indianExaminers,
+      foreign_examiner_id:foreignExaminers,
+      committee:committeeMembers,
     };
-    console.log(formData); // Replace this with your actual form submission logic
-    alert('Form submitted. Check the console for the data!');
+    try {
+      const response = await form4cSubmit(formData);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+      alert('Failed to submit form.');
+    }
   };
   
   const examinersParagraph = `
@@ -82,7 +85,7 @@ Foreign Examiners: ${foreignExaminers.map(ex => ex.name).join(', ')}
         {Object.keys(candidateDetails).map((key) => (
           <div key={key}>
             <label htmlFor={key} className="block text-sm font-medium text-gray-700">{key.replace(/([A-Z])/g, ' $1').trim()}:</label>
-            <input type="text" id={key} value={candidateDetails[key]} onChange={(e) => handleCandidateChange(key, e.target.value)}
+            <input type={key === 'date_of_registeration' ? 'date' : 'text'} id={key} value={candidateDetails[key]} onChange={(e) => handleCandidateChange(key, e.target.value)}
                    className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
           </div>
         ))}
@@ -98,9 +101,6 @@ Foreign Examiners: ${foreignExaminers.map(ex => ex.name).join(', ')}
             ))}
           </div>
         ))}
-        <button type="button" onClick={() => addExaminer('indian')} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
-          Add Indian Examiner
-        </button>
 
         {/* Dynamic Foreign Examiners */}
         <h3 className="text-lg font-medium text-gray-700">Foreign Examiners:</h3>
@@ -113,9 +113,19 @@ Foreign Examiners: ${foreignExaminers.map(ex => ex.name).join(', ')}
             ))}
           </div>
         ))}
-        <button type="button" onClick={() => addExaminer('foreign')} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
-          Add Foreign Examiner
-        </button>
+
+        <div>
+          <h3 className="text-lg font-medium text-gray-700">Signature of Doctoral Scrutiny Committee Members:</h3>
+          {committeeMembers.map((member, index) => (
+            <div key={index} className="grid grid-cols-3 gap-4 mb-2">
+              <input type="text" placeholder="Name" value={member.name} onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
+                     className="col-span-1 p-2 border border-gray-300 rounded-md shadow-sm"/>
+              <input type="text" placeholder="Signature" value={member.signature} onChange={(e) => handleMemberChange(index, 'signature', e.target.value)}
+                     className="col-span-2 p-2 border border-gray-300 rounded-md shadow-sm"/>
+            </div>
+          ))}
+        </div>
+
 
         <div>
           <p className="mt-4 text-sm text-gray-700">{examinersParagraph}</p>

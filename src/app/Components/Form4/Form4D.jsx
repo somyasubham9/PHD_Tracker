@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useForm4DSubmitMutation } from '../../Services/formService';
 
 const Form4D = () => {
-const [form4dSubmit,form4dSubmitResponse]=useForm4DSubmitMutation();
-
+  const [form4dSubmit, form4dSubmitResponse] = useForm4DSubmitMutation();
   const [certifications, setCertifications] = useState({
     noJointPublication: false,
     notSupervisor: false,
@@ -14,9 +13,12 @@ const [form4dSubmit,form4dSubmitResponse]=useForm4DSubmitMutation();
     setCertifications(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const handleSubmit = async(event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const formData={}
+    const allChecked = certifications.noJointPublication && certifications.notSupervisor && certifications.notRelated;
+    const formData = {
+      is_accepted:allChecked,
+    };
     try {
       const response = await form4dSubmit(formData);
       console.log(response);
@@ -24,8 +26,9 @@ const [form4dSubmit,form4dSubmitResponse]=useForm4DSubmitMutation();
       console.error(error);
       alert("Failed to submit form.");
     }
-    alert('Conflict of Interest form submitted. Check the console for the data!');
   };
+
+  const allChecked = certifications.noJointPublication && certifications.notSupervisor && certifications.notRelated;
 
   const declarationText = `
     This is to certify that the examiner list submitted by me does not have any conflict of interest. I certify the following:
@@ -60,7 +63,13 @@ const [form4dSubmit,form4dSubmitResponse]=useForm4DSubmitMutation();
         </div>
 
         <div>
-          <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          <button
+            type="submit"
+            disabled={!allChecked}
+            className={`text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+              allChecked ? 'bg-blue-500 hover:bg-blue-700' : 'bg-gray-500 cursor-not-allowed'
+            }`}
+          >
             Submit
           </button>
         </div>

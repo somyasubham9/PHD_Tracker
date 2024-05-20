@@ -151,6 +151,15 @@ export const formServicesApi = createApi({
         },
       }),
     }),
+
+    getExaminerProfile: builder.query({
+      query: () => ({
+        url: AppConstants.endPoints.examinerProfile,
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+        },
+      }),
+    }),
   }),
 });
 
@@ -168,4 +177,5 @@ export const {
   useForm4ESubmitMutation,
   useForm5SubmitMutation,
   useForm6SubmitMutation,
+  useLazyGetExaminerProfileQuery
 } = formServicesApi;

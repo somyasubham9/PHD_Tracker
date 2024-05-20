@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useForm4CSubmitMutation, useLazyGetExaminerProfileQuery } from '../../Services/formService';
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Form4C = () => {
+  const initialState = useSelector((state) => state.user);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  
   const [form4cSubmit, form4cSubmitResponse] = useForm4CSubmitMutation();
   const [triggerExaminers, { data: examiners, isLoading: isFetching }] = useLazyGetExaminerProfileQuery();
   const [committeeMembers, setCommitteeMembers] = useState(Array(5).fill({ name: '', signature: '' }));
@@ -29,6 +34,47 @@ useEffect(() => {
   });
 }, [triggerExaminers]);
 
+useEffect(() => {
+  const getForm4CData = async () => {
+    const token = sessionStorage.getItem("access");
+    if (!token) {
+      console.error("No access token found in session storage");
+      return;
+    }
+
+    try {
+      console.log(initialState.userId);
+      const res = await axios.get(
+        `http://127.0.0.1:8000/api/form4C/user/${initialState.userId}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = res.data.data;
+      setCandidateDetails({
+        name: data.name,
+        rollno: data.rollno,
+        department: data.department,
+        date_of_registeration:data.date_of_registeration,
+        title_of_thesis: data.title_of_thesis,
+        degree: data.degree,
+        supervisor: data.supervisor,
+      });
+      setSelectedIndianExaminers(data.indian_examiner);
+      setSelectedForeignExaminers(data.foreign_examiner);
+
+      setIsSubmitted(true);
+    } catch (error) {
+      // console.error('Error fetching data:', error.response ? error.response.data : error.message);
+    }
+  };
+  getForm4CData();
+}, [initialState.userId, isSubmitted]);
+
+
 
   const handleCandidateChange = (field, value) => {
     setCandidateDetails(prev => ({ ...prev, [field]: value }));
@@ -50,9 +96,9 @@ useEffect(() => {
     };
 
     try {
-      console.log(formData);
       const response = await form4cSubmit(formData);
       console.log(response);
+      setIsSubmitted(true);
     } catch (error) {
       console.error(error);
       alert('Failed to submit form.');
@@ -72,7 +118,7 @@ useEffect(() => {
         {Object.keys(candidateDetails).map((key) => (
           <div key={key}>
             <label htmlFor={key} className="block text-sm font-medium text-gray-700">{key.replace(/([A-Z])/g, ' $1').trim()}:</label>
-            <input type={key === 'date_of_registeration' ? 'date' : 'text'} id={key} value={candidateDetails[key]}
+            <input readOnly={isSubmitted} type={key === 'date_of_registeration' ? 'date' : 'text'} id={key} value={candidateDetails[key]}
                    onChange={(e) => handleCandidateChange(key, e.target.value)}
                    className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
           </div>
@@ -84,6 +130,7 @@ useEffect(() => {
     Select an Indian Examiner:
   </label>
   <select
+  disabled={isSubmitted}
     id="indian-examiners"
     className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
     onChange={(e) => {
@@ -103,6 +150,7 @@ useEffect(() => {
     Select a Foreign Examiner:
   </label>
   <select
+  disabled={isSubmitted}
     id="foreign-examiners"
     className="w-full p-2 border border-gray-300 rounded-md shadow-sm"
     onChange={(e) => {
@@ -122,17 +170,17 @@ useEffect(() => {
           <h3 className="text-lg font-medium text-gray-700">Signature of Doctoral Scrutiny Committee Members:</h3>
           {committeeMembers.map((member, index) => (
             <div key={index} className="grid grid-cols-3 gap-4 mb-2">
-              <input type="text" placeholder="Name" value={member.name} onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
+              <input readOnly={isSubmitted} type="text" placeholder="Name" value={member.name} onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
                      className="col-span-1 p-2 border border-gray-300 rounded-md shadow-sm"/>
-              <input type="text" placeholder="Signature" value={member.signature} onChange={(e) => handleMemberChange(index, 'signature', e.target.value)}
+              <input readOnly={isSubmitted} type="text" placeholder="Signature" value={member.signature} onChange={(e) => handleMemberChange(index, 'signature', e.target.value)}
                      className="col-span-2 p-2 border border-gray-300 rounded-md shadow-sm"/>
             </div>
           ))}
         </div>
 
-        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        {!isSubmitted && <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
           Submit
-        </button>
+        </button>}
       </form>
     </div>
   );

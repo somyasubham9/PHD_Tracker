@@ -132,10 +132,17 @@ export const formServicesApi = createApi({
     form5Submit: builder.mutation({
       query: (body) => ({
         url: AppConstants.endPoints.form5Submit,
-
+        method: "POST",
+        body: body,
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+        },
+      }),
+    }),
     form6Submit: builder.mutation({
       query: (body) => ({
-        url: AppConstants.endPoints.form6Submit, // Update this endpoint according to your API
+        url: AppConstants.endPoints.form6Submit,
         method: "POST",
         body: body,
         headers: {

@@ -20,6 +20,7 @@ export const SidebarData = [
     path: '/form1B',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
+    
   },
   {
     title: 'Form 2',

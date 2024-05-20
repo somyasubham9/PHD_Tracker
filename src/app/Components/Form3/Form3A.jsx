@@ -1,12 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm3ASubmitMutation } from "../../Services/formService";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Form3A = () => {
+  const initialState = useSelector((state) => state.user);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  
   const [name, setName] = useState("");
   const [seminarDate, setSeminarDate] = useState("");
   const [willAppear, setWillAppear] = useState(true); // true for 'will appear', false for 'not appear'
 
   const [form3aSubmit, form3aSubmitResponse] = useForm3ASubmitMutation();
+
+useEffect(()=>{
+  const getForm3AData = async () => {
+    const token = sessionStorage.getItem("access");
+    if (!token) {
+      console.error("No access token found in session storage");
+      return;
+    }
+
+    try {
+      console.log(initialState.userId);
+      const res = await axios.get(
+        `http://127.0.0.1:8000/api/form3A/user/${initialState.userId}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = res.data.data;
+      setName(data.name);
+      setSeminarDate(data.seminar_date);
+
+      setIsSubmitted(true);
+    } catch (error) {
+      // console.error('Error fetching data:', error.response ? error.response.data : error.message);
+    }
+  };
+  getForm3AData();
+},[initialState.userId, isSubmitted])
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -18,6 +54,7 @@ const Form3A = () => {
     try {
       const response = await form3aSubmit(formData);
       console.log(response);
+      setIsSubmitted(true);
     } catch (error) {
       console.error(error);
       alert("Failed to submit form.");
@@ -53,6 +90,7 @@ const Form3A = () => {
             onChange={(e) => setName(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
             placeholder="Mr./Ms. Name"
+            readOnly={isSubmitted}
           />
         </div>
 
@@ -70,6 +108,7 @@ const Form3A = () => {
               value={seminarDate}
               onChange={(e) => setSeminarDate(e.target.value)}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+              readOnly={isSubmitted}
             />
           </div>
           <div className="w-1/2 pl-4 pt-4 flex items-center">
@@ -80,6 +119,7 @@ const Form3A = () => {
                 checked={willAppear}
                 onChange={() => setWillAppear(true)}
                 className="form-radio h-5 w-5 text-blue-600"
+                disabled={isSubmitted}
               />
               <span className="ml-2 text-gray-700">Will appear</span>
             </label>
@@ -90,6 +130,7 @@ const Form3A = () => {
                 checked={!willAppear}
                 onChange={() => setWillAppear(false)}
                 className="form-radio h-5 w-5 text-blue-600"
+                disabled={isSubmitted}
               />
               <span className="ml-2 text-gray-700">Will not appear</span>
             </label>
@@ -105,17 +146,14 @@ const Form3A = () => {
         </div>
 
         <div>
-          <button
-            type="submit"
-            disabled={!willAppear}
-            className={`text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-              willAppear
-                ? "bg-blue-500 hover:bg-blue-700"
-                : "bg-gray-500 cursor-not-allowed"
-            }`}
-          >
-            Submit
-          </button>
+        {!isSubmitted && (
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Submit
+            </button>
+          )}
         </div>
       </form>
     </div>

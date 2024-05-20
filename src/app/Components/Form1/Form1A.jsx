@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm1ASubmitMutation } from "../../Services/formService";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Form1A = () => {
+  const initialState = useSelector((state) => state.user);
   const [form1aSubmit, form1aSubmitResponse] = useForm1ASubmitMutation();
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const [qualifications, setQualifications] = useState([
     {
@@ -22,6 +27,40 @@ const Form1A = () => {
   const [studentship, setStudentship] = useState("");
   const [recommender1, setRecommender1] = useState("");
   const [recommender2, setRecommender2] = useState("");
+
+  useEffect( () => {
+    const getForm1aData = async () => {
+      const token = sessionStorage.getItem('access');
+      if (!token) {
+        console.error('No access token found in session storage');
+        return;
+      }
+
+      try {
+        console.log(initialState.userId)
+        const res = await axios.get(`http://127.0.0.1:8000/api/form1A/user/${initialState.userId}/`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        const data = res.data.data;
+
+        setDepartment(data.department);
+        setCandidateName(data.name);
+        setRollNumber(data.rollno);
+        setResearchArea(data.area_of_research);
+        setStudentship(data.category_of_studentship);
+        setRecommender1(data.recommender_1);
+        setRecommender2(data.recommender_2);
+        setQualifications(data.education);
+        setIsSubmitted(true); 
+      } catch (error) {
+        // console.error('Error fetching data:', error.response ? error.response.data : error.message);
+      }
+    };
+    getForm1aData();
+  },[initialState.userId,isSubmitted]);
 
   const handleAddRow = () => {
     const newRow = {
@@ -68,6 +107,7 @@ const Form1A = () => {
     await form1aSubmit(formData)
       .then((res) => {
         console.log(res);
+        setIsSubmitted(true);
       })
       .catch((err) => {
         console.error(err);
@@ -99,6 +139,7 @@ const Form1A = () => {
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            readOnly={isSubmitted}
           />
         </div>
 
@@ -115,6 +156,7 @@ const Form1A = () => {
             value={candidateName}
             onChange={(e) => setCandidateName(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            readOnly={isSubmitted}
           />
         </div>
 
@@ -131,6 +173,7 @@ const Form1A = () => {
             value={rollNumber}
             onChange={(e) => setRollNumber(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            readOnly={isSubmitted}
           />
         </div>
 
@@ -147,6 +190,7 @@ const Form1A = () => {
                 value={qualification.standard}
                 onChange={(e) => handleChange(index, e)}
                 className="col-span-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                readOnly={isSubmitted}
               />
               <input
                 type="text"
@@ -155,6 +199,7 @@ const Form1A = () => {
                 value={qualification.university}
                 onChange={(e) => handleChange(index, e)}
                 className="col-span-2 p-2 border border-gray-300 rounded-md shadow-sm"
+                readOnly={isSubmitted}
               />
               <input
                 type="text"
@@ -163,6 +208,7 @@ const Form1A = () => {
                 value={qualification.degree}
                 onChange={(e) => handleChange(index, e)}
                 className="col-span-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                readOnly={isSubmitted}
               />
               <input
                 type="text"
@@ -171,6 +217,7 @@ const Form1A = () => {
                 value={qualification.year_of_passing}
                 onChange={(e) => handleChange(index, e)}
                 className="col-span-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                readOnly={isSubmitted}
               />
               <input
                 type="text"
@@ -179,6 +226,7 @@ const Form1A = () => {
                 value={qualification.cgpa}
                 onChange={(e) => handleChange(index, e)}
                 className="col-span-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                readOnly={isSubmitted}
               />
               <input
                 type="text"
@@ -187,8 +235,9 @@ const Form1A = () => {
                 value={qualification.subjects}
                 onChange={(e) => handleChange(index, e)}
                 className="col-span-2 p-2 border border-gray-300 rounded-md shadow-sm"
+                readOnly={isSubmitted}
               />
-              {index > 0 && (
+              {index > 0 && !isSubmitted && (
                 <button
                   type="button"
                   onClick={() => handleRemoveRow(index)}
@@ -199,13 +248,15 @@ const Form1A = () => {
               )}
             </div>
           ))}
-          <button
-            type="button"
-            onClick={handleAddRow}
-            className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
-          >
-            Add Row
-          </button>
+          {!isSubmitted && (
+            <button
+              type="button"
+              onClick={handleAddRow}
+              className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
+            >
+              Add Row
+            </button>
+          )}
         </div>
 
         <div>
@@ -221,6 +272,7 @@ const Form1A = () => {
             onChange={(e) => setResearchArea(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
             rows="4"
+            readOnly={isSubmitted}
           ></textarea>
         </div>
 
@@ -245,6 +297,7 @@ const Form1A = () => {
                     checked={studentship === item} // Set checked if it matches the state
                     onChange={(e) => setStudentship(e.target.value)}
                     className="form-radio h-5 w-5 text-blue-600"
+                    disabled={isSubmitted}
                   />
                   <span className="ml-2 text-gray-700">{item}</span>
                 </label>
@@ -267,6 +320,7 @@ const Form1A = () => {
             onChange={(e) => setRecommender1(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
             placeholder="Name of Recommender 1"
+            readOnly={isSubmitted}
           />
         </div>
 
@@ -285,19 +339,22 @@ const Form1A = () => {
             name="recommender2"
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
             placeholder="Name of Recommender 2"
+            readOnly={isSubmitted}
           />
         </div>
 
-        <div>
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Submit
-          </button>
-        </div>
+        {!isSubmitted && (
+          <div>
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Submit
+            </button>
+          </div>
+        )}
       </form>
-    </div>
+  </div>
   );
 };
 

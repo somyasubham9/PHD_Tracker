@@ -1,7 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm1BSubmitMutation } from "../../Services/formService";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Form1B = () => {
+  const initialState = useSelector((state) => state.user);
+  const [form1bSubmit, form1bSubmitResponse] = useForm1BSubmitMutation();
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const [loading, setLoading] = useState(true); // New loading state
+
   const [department, setDepartment] = useState("");
   const [candidateName, setCandidateName] = useState("");
   const [rollNumber, setRollNumber] = useState("");
@@ -17,7 +26,47 @@ const Form1B = () => {
     },
   ]);
 
-  const [form1bSubmit, form1bSubmitResponse] = useForm1BSubmitMutation();
+  useEffect(() => {
+    const getForm1bData = async () => {
+      const token = sessionStorage.getItem("access");
+      if (!token) {
+        console.error("No access token found in session storage");
+        setLoading(false); // Stop loading if no token
+        return;
+      }
+
+      try {
+        console.log(initialState.userId);
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/form1B/user/${initialState.userId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = res.data.data;
+        console.log(data);
+        setDepartment(data.department || "");
+        setCandidateName(data.name || "");
+        setRollNumber(data.rollno || "");
+        setDateOfEnrollment(data.date_of_enrolment || "");
+        setResearchArea(data.area_of_research || "");
+        setStudentship(data.category_of_studentship || "");
+        setCourses(data.course || []); // Ensure courses is an array
+        setIsSubmitted(true);
+      } catch (error) {
+        console.error(
+          "Error fetching data:",
+          error.response ? error.response.data : error.message
+        );
+      } finally {
+        setLoading(false); // Stop loading after data is fetched or error occurs
+      }
+    };
+    getForm1bData();
+  }, [initialState.userId,isSubmitted]);
+
 
   const handleAddCourse = () => {
     const newCourse = {
@@ -49,86 +98,129 @@ const Form1B = () => {
     e.preventDefault();
 
     const formData = {
-      department:department,
-      name:candidateName,
-      rollno:rollNumber,
-      date_of_enrolment:dateOfEnrollment,
-      area_of_research:researchArea,
-      category_of_studentship:studentship,
-      courses:courses,
+      department,
+      name: candidateName,
+      rollno: rollNumber,
+      date_of_enrolment: dateOfEnrollment,
+      area_of_research: researchArea,
+      category_of_studentship: studentship,
+      courses,
     };
 
     await form1bSubmit(formData)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+      .then((res) => {
+        console.log(res);
+        setIsSubmitted(true);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
   };
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading indicator
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <form onSubmit={handleSubmit} className="bg-slate-100 p-8 shadow-md rounded-lg space-y-6">
-        <h2 className="text-2xl font-bold text-gray-700">COURSEWORK RECOMMENDED BY DSC FOR Ph.D. CANDIDATE</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-slate-100 p-8 shadow-md rounded-lg space-y-6"
+      >
+        <h2 className="text-2xl font-bold text-gray-700">
+          COURSEWORK RECOMMENDED BY DSC FOR Ph.D. CANDIDATE
+        </h2>
 
         <div>
-          <label htmlFor="department" className="block text-sm font-medium text-gray-700">Department:</label>
+          <label
+            htmlFor="department"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Department:
+          </label>
           <input
             type="text"
             id="department"
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            readOnly={isSubmitted}
           />
         </div>
 
         <div>
-          <label htmlFor="candidateName" className="block text-sm font-medium text-gray-700">Full name of the candidate:</label>
+          <label
+            htmlFor="candidateName"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Full name of the candidate:
+          </label>
           <input
             type="text"
             id="candidateName"
             value={candidateName}
             onChange={(e) => setCandidateName(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            readOnly={isSubmitted}
           />
         </div>
 
         <div>
-          <label htmlFor="rollNumber" className="block text-sm font-medium text-gray-700">Roll Number:</label>
+          <label
+            htmlFor="rollNumber"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Roll Number:
+          </label>
           <input
             type="text"
             id="rollNumber"
             value={rollNumber}
             onChange={(e) => setRollNumber(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            readOnly={isSubmitted}
           />
         </div>
 
         <div>
-          <label htmlFor="dateOfEnrollment" className="block text-sm font-medium text-gray-700">Date of Enrolment/Admission:</label>
+          <label
+            htmlFor="dateOfEnrollment"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Date of Enrolment/Admission:
+          </label>
           <input
             type="date"
             id="dateOfEnrollment"
             value={dateOfEnrollment}
             onChange={(e) => setDateOfEnrollment(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            readOnly={isSubmitted}
           />
         </div>
 
         <div>
-          <label htmlFor="researchArea" className="block text-sm font-medium text-gray-700">Broad area of research proposed:</label>
+          <label
+            htmlFor="researchArea"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Broad area of research proposed:
+          </label>
           <textarea
             id="researchArea"
             value={researchArea}
             onChange={(e) => setResearchArea(e.target.value)}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"
             rows="4"
+            readOnly={isSubmitted}
           ></textarea>
         </div>
 
         <fieldset>
-          <legend className="text-sm font-medium text-gray-700">Category of studentship:</legend>
+          <legend className="text-sm font-medium text-gray-700">
+            Category of studentship:
+          </legend>
           <div className="mt-2 space-y-2">
             {[
               "Institute Fellowship",
@@ -146,6 +238,7 @@ const Form1B = () => {
                     checked={studentship === item}
                     onChange={(e) => setStudentship(e.target.value)}
                     className="form-radio h-5 w-5 text-blue-600"
+                    disabled={isSubmitted}
                   />
                   <span className="ml-2 text-gray-700">{item}</span>
                 </label>
@@ -155,7 +248,9 @@ const Form1B = () => {
         </fieldset>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Course work recommended (if any):</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Course work recommended (if any):
+          </label>
           {courses.map((course, index) => (
             <div key={index} className="grid grid-cols-6 gap-3 items-center mb-2">
               <input
@@ -165,6 +260,7 @@ const Form1B = () => {
                 value={course.subject_id}
                 onChange={(e) => handleChange(index, e)}
                 className="col-span-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                readOnly={isSubmitted}
               />
               <input
                 type="text"
@@ -173,6 +269,7 @@ const Form1B = () => {
                 value={course.course_title}
                 onChange={(e) => handleChange(index, e)}
                 className="col-span-2 p-2 border border-gray-300 rounded-md shadow-sm"
+                readOnly={isSubmitted}
               />
               <input
                 type="text"
@@ -181,6 +278,7 @@ const Form1B = () => {
                 value={course.credits}
                 onChange={(e) => handleChange(index, e)}
                 className="col-span-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                readOnly={isSubmitted}
               />
               <input
                 type="text"
@@ -189,32 +287,38 @@ const Form1B = () => {
                 value={course.remarks}
                 onChange={(e) => handleChange(index, e)}
                 className="col-span-2 p-2 border border-gray-300 rounded-md shadow-sm"
+                readOnly={isSubmitted}
               />
-              {index > 0 && (
+              {index > 0 && !isSubmitted && (
                 <button
                   type="button"
                   onClick={() => handleRemoveCourse(index)}
-                  className="ml-2 bg-red-500 text-white p-1 rounded"
+                  className="text-red-500 hover:text-red-700"
                 >
                   Remove
                 </button>
               )}
             </div>
           ))}
-          <button
-            type="button"
-            onClick={handleAddCourse}
-            className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded"
-          >
-            Add Course
-          </button>
+          {!isSubmitted && (
+            <button
+              type="button"
+              onClick={handleAddCourse}
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm"
+            >
+              Add Course
+            </button>
+          )}
         </div>
 
-        <div>
-          <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        {!isSubmitted && (
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
             Submit
           </button>
-        </div>
+        )}
       </form>
     </div>
   );

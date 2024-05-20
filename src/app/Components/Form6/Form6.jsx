@@ -23,7 +23,7 @@ const Form6 = () => {
   const handleChange = (field, value) => {
     setReportDetails({ ...reportDetails, [field]: value });
   };
-
+  
   const handleCommentChange = (index, value) => {
     const updatedComments = comments.map((comment, idx) => idx === index ? value : comment);
     setComments(updatedComments);

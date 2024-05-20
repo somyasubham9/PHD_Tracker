@@ -14,7 +14,7 @@ const [allForeignExaminers, setAllForeignExaminers] = useState([]);
     name: '',
     rollno: '',
     department: '',
-    date_of_registration: '',
+    date_of_registeration: '',
     title_of_thesis: '',
     degree: '',
     supervisor: ''
@@ -46,13 +46,13 @@ useEffect(() => {
       ...candidateDetails,
       indian_examiner_id: parseInt(selectedIndianExaminers), // Ensure it's an integer
     foreign_examiner_id: parseInt(selectedForeignExaminers),
-      committee_members: committeeMembers,
+      committees: committeeMembers,
     };
 
     try {
       console.log(formData);
-      // const response = await form4cSubmit(formData);
-      // console.log(response);
+      const response = await form4cSubmit(formData);
+      console.log(response);
     } catch (error) {
       console.error(error);
       alert('Failed to submit form.');
@@ -72,7 +72,7 @@ useEffect(() => {
         {Object.keys(candidateDetails).map((key) => (
           <div key={key}>
             <label htmlFor={key} className="block text-sm font-medium text-gray-700">{key.replace(/([A-Z])/g, ' $1').trim()}:</label>
-            <input type={key === 'date_of_registration' ? 'date' : 'text'} id={key} value={candidateDetails[key]}
+            <input type={key === 'date_of_registeration' ? 'date' : 'text'} id={key} value={candidateDetails[key]}
                    onChange={(e) => handleCandidateChange(key, e.target.value)}
                    className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm"/>
           </div>

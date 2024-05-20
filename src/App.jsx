@@ -1,7 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
-import HomePage  from "./app/Page/HomePage/HomePage";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
+import HomePage from "./app/Page/HomePage/HomePage";
 import Form1ALayout from "./app/Page/Form1Page/Form1ALayout";
 import Form1BLayout from "./app/Page/Form1Page/Form1BLayout";
 import Form2Layout from "./app/Page/Form2Page/Form2Layout";
@@ -21,38 +27,53 @@ import AuthPage from "./app/Components/Auth/Auth";
 import LayoutWithNavbar from "./app/Components/NavBarLayout";
 import ProtectedRoute from "./app/Components/ProtectedRoute";
 import NotFound from "./app/Page/NotFound";
+import { updateFirstName, updateIsAdmin, updateIsLoggedIn, updateLastName, updateUserEmail, updateUserId } from "./app/Redux/slices/userSlice";
+import { useDispatch } from "react-redux";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const userDetails = JSON.parse(sessionStorage.getItem("userDetails"));
+    if (userDetails) {
+      dispatch(updateIsLoggedIn(userDetails.isLoggedIn));
+      dispatch(updateFirstName(userDetails.firstName));
+      dispatch(updateIsAdmin(userDetails.isAdmin));
+      dispatch(updateLastName(userDetails.lastName));
+      dispatch(updateUserEmail(userDetails.userEmail));
+      dispatch(updateUserId(userDetails.userId));
+      // dispatch other user details
+    }
+  }, [dispatch]);
 
   return (
     <Router>
       <main className="">
-
-      <LayoutWithNavbar />
+        <LayoutWithNavbar />
         <Routes>
-        <Route path="/auth" element={<AuthPage />} />
-        <Route element={<ProtectedRoute />}>
-        <Route path="/studentlist" element={<StudentList />} />
-        <Route path="/" element={<HomePage />} />
-        <Route path="/form1A" element={<Form1ALayout />} />
-        <Route path="/form1B" element={<Form1BLayout />} />
-        <Route path="/form2" element={<Form2Layout />} />
-        <Route path="/form3A" element={<Form3ALayout />} />
-        <Route path="/form3B" element={<Form3BLayout />} />
-        <Route path="/form3C" element={<Form3CLayout />} />
-        <Route path="/form4A" element={<Form4ALayout />} />
-        <Route path="/form4B" element={<Form4BLayout />} />
-        <Route path="/form4C" element={<Form4CLayout />} />
-        <Route path="/form4D" element={<Form4DLayout />} />
-        <Route path="/form4E" element={<Form4ELayout />} />
-        <Route path="/form5" element={<Form5Layout />} />
-        <Route path="/form6" element={<Form6Layout />} />
-        <Route path="/profile" element={<ProfileLayout />} />
-        <Route path="*" element={<Navigate replace to="/" />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/studentlist" element={<StudentList />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/form1A" element={<Form1ALayout />} />
+            <Route path="/form1B" element={<Form1BLayout />} />
+            <Route path="/form2" element={<Form2Layout />} />
+            <Route path="/form3A" element={<Form3ALayout />} />
+            <Route path="/form3B" element={<Form3BLayout />} />
+            <Route path="/form3C" element={<Form3CLayout />} />
+            <Route path="/form4A" element={<Form4ALayout />} />
+            <Route path="/form4B" element={<Form4BLayout />} />
+            <Route path="/form4C" element={<Form4CLayout />} />
+            <Route path="/form4D" element={<Form4DLayout />} />
+            <Route path="/form4E" element={<Form4ELayout />} />
+            <Route path="/form5" element={<Form5Layout />} />
+            <Route path="/form6" element={<Form6Layout />} />
+            <Route path="/profile" element={<ProfileLayout />} />
+            <Route path="*" element={<Navigate replace to="/" />} />
           </Route>
-        <Route path="*" element={<NotFound/>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
-        </main>
+      </main>
     </Router>
   );
 }

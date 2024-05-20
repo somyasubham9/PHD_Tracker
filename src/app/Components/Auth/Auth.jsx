@@ -3,7 +3,7 @@ import backgroundImage from "../../../assets/login.jpg";
 import {
   useUserRegisterMutation,
   useUserLoginMutation,
-  useUserUpdateMutation
+  useUserUpdateMutation,
 } from "../../Services/userServices";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -42,7 +42,7 @@ const AuthPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [department,setDepartment]=useState("");
+  const [department, setDepartment] = useState("");
 
   const [registerUser, registerUserResponse] = useUserRegisterMutation();
 
@@ -60,7 +60,21 @@ const AuthPage = () => {
     if (loginUserResponse.isSuccess) {
       sessionStorage.setItem("access", loginUserResponse.data.access);
       sessionStorage.setItem("refresh", loginUserResponse.data.refresh);
-    //   console.log(loginUserResponse);
+      //   console.log(loginUserResponse);
+      
+      // Storing user details
+      const userDetails = {
+        isLoggedIn: true,
+        isAdmin: loginUserResponse.data.user.is_superuser,
+        firstName: loginUserResponse.data.user.first_name,
+        lastName: loginUserResponse.data.user.last_name,
+        userEmail: loginUserResponse.data.user.email,
+        userId: loginUserResponse.data.user.id,
+        // add other necessary details
+      };
+
+      sessionStorage.setItem("userDetails", JSON.stringify(userDetails));
+
       dispatch(updateIsLoggedIn(true));
       dispatch(updateCreatedDate(loginUserResponse.data.user.created_at));
       dispatch(updateUpdatedDate(loginUserResponse.data.user.updated_at));
@@ -74,25 +88,51 @@ const AuthPage = () => {
       dispatch(updateSupervisor(loginUserResponse.data.user.supervisor));
 
       // Assuming form submission statuses are included in the response
-      dispatch(updateform1a_submitted(loginUserResponse.data.user.form1a_submitted));
-      dispatch(updateform1b_submitted(loginUserResponse.data.user.form1b_submitted));
-      dispatch(updateform2_submitted(loginUserResponse.data.user.form2_submitted));
-      dispatch(updateform3a_submitted(loginUserResponse.data.user.form3a_submitted));
-      dispatch(updateform3b_submitted(loginUserResponse.data.user.form3b_submitted));
-      dispatch(updateform3c_submitted(loginUserResponse.data.user.form3c_submitted));
-      dispatch(updateform4a_submitted(loginUserResponse.data.user.form4a_submitted));
-      dispatch(updateform4b_submitted(loginUserResponse.data.user.form4b_submitted));
-      dispatch(updateform4c_submitted(loginUserResponse.data.user.form4c_submitted));
-      dispatch(updateform4d_submitted(loginUserResponse.data.user.form4d_submitted));
-      dispatch(updateform4e_submitted(loginUserResponse.data.user.form4e_submitted));
-      dispatch(updateform5_submitted(loginUserResponse.data.user.form5_submitted));
-      dispatch(updateform6_submitted(loginUserResponse.data.user.form6_submitted));
+      dispatch(
+        updateform1a_submitted(loginUserResponse.data.user.form1a_submitted)
+      );
+      dispatch(
+        updateform1b_submitted(loginUserResponse.data.user.form1b_submitted)
+      );
+      dispatch(
+        updateform2_submitted(loginUserResponse.data.user.form2_submitted)
+      );
+      dispatch(
+        updateform3a_submitted(loginUserResponse.data.user.form3a_submitted)
+      );
+      dispatch(
+        updateform3b_submitted(loginUserResponse.data.user.form3b_submitted)
+      );
+      dispatch(
+        updateform3c_submitted(loginUserResponse.data.user.form3c_submitted)
+      );
+      dispatch(
+        updateform4a_submitted(loginUserResponse.data.user.form4a_submitted)
+      );
+      dispatch(
+        updateform4b_submitted(loginUserResponse.data.user.form4b_submitted)
+      );
+      dispatch(
+        updateform4c_submitted(loginUserResponse.data.user.form4c_submitted)
+      );
+      dispatch(
+        updateform4d_submitted(loginUserResponse.data.user.form4d_submitted)
+      );
+      dispatch(
+        updateform4e_submitted(loginUserResponse.data.user.form4e_submitted)
+      );
+      dispatch(
+        updateform5_submitted(loginUserResponse.data.user.form5_submitted)
+      );
+      dispatch(
+        updateform6_submitted(loginUserResponse.data.user.form6_submitted)
+      );
 
       //isSuperUser for isAdmin
       dispatch(updateIsAdmin(loginUserResponse.data.user.is_superuser));
 
       //Navigate
-      navigate('/');
+      navigate("/");
     }
     // navigate()
   }, [registerUserResponse.isSuccess, loginUserResponse.isSuccess]);

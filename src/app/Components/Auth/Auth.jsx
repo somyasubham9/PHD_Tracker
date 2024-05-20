@@ -47,7 +47,7 @@ const AuthPage = () => {
   const [registerUser, registerUserResponse] = useUserRegisterMutation();
 
   const [loginUser, loginUserResponse] = useUserLoginMutation();
-  const [updateUser, updateUserResponse] = useUserUpdateMutation();
+  // const [updateUser, updateUserResponse] = useUserUpdateMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -132,6 +132,7 @@ const AuthPage = () => {
     await registerUser(jsonData).then((res) => {
       console.log(res);
     });
+    // await updateUser()
     console.log("Handling signup");
     // Add your signup logic here
   };

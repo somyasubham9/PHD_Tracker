@@ -18,21 +18,22 @@ export const userServicesApi = createApi({
       }),
     }),
 
-    userUpdate: builder.mutation({
-      query: (body, id) => {
-        console.log(body, typeof(id));
-            console.log(`Making PATCH request to: ${AppConstants.endPoints.updateUser}/${id}`);
-            return {
-                url: `${AppConstants.endPoints.updateUser}/${id}`,
-                method: "PATCH",
-                body: body,
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                    Authorization: `Bearer ${sessionStorage.getItem("access")}`,
-                },
-            };
-        },
-    }),
+      userUpdate: builder.mutation({
+      query: ({ id, area_of_research }) => {
+          console.log(area_of_research, id);
+          console.log(`Making PATCH request to: ${AppConstants.endPoints.updateUser}/${id}`);
+          return {
+              url: `${AppConstants.endPoints.updateUser}/${id}/update/`,
+              method: "PATCH",
+              body: { area_of_research },
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                  Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+              },
+          };
+      },
+  }),
+
 
 
     userLogin: builder.mutation({

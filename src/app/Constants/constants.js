@@ -19,5 +19,6 @@ export const AppConstants = {
     form4DSubmit:'form4D/user/',
     form4ESubmit:'form4E/user/',
     form5Submit:'form5/user/',
+    form6Submit:'form6/user/'
   },
 };

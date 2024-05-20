@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import HomePage  from "./app/Page/HomePage/HomePage";
 import Form1ALayout from "./app/Page/Form1Page/Form1ALayout";
 import Form1BLayout from "./app/Page/Form1Page/Form1BLayout";
@@ -19,6 +19,8 @@ import Form6Layout from "./app/Page/Form6Page/Form6Layout";
 import ProfileLayout from "./app/Page/ProfileLayout";
 import AuthPage from "./app/Components/Auth/Auth";
 import LayoutWithNavbar from "./app/Components/NavBarLayout";
+import ProtectedRoute from "./app/Components/ProtectedRoute";
+import NotFound from "./app/Page/NotFound";
 
 function App() {
 
@@ -28,6 +30,8 @@ function App() {
 
       <LayoutWithNavbar />
         <Routes>
+        <Route path="/auth" element={<AuthPage />} />
+        <Route element={<ProtectedRoute />}>
         <Route path="/studentlist" element={<StudentList />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/form1A" element={<Form1ALayout />} />
@@ -44,7 +48,9 @@ function App() {
         <Route path="/form5" element={<Form5Layout />} />
         <Route path="/form6" element={<Form6Layout />} />
         <Route path="/profile" element={<ProfileLayout />} />
-        <Route path="/auth" element={<AuthPage />} />
+        <Route path="*" element={<Navigate replace to="/" />} />
+          </Route>
+        <Route path="*" element={<NotFound/>} />
         </Routes>
         </main>
     </Router>

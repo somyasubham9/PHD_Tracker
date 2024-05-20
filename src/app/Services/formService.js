@@ -18,6 +18,7 @@ export const formServicesApi = createApi({
         },
       }),
     }),
+
     form1BSubmit: builder.mutation({
       query: (body) => ({
         url: AppConstants.endPoints.form1BSubmit,
@@ -131,6 +132,10 @@ export const formServicesApi = createApi({
     form5Submit: builder.mutation({
       query: (body) => ({
         url: AppConstants.endPoints.form5Submit,
+
+    form6Submit: builder.mutation({
+      query: (body) => ({
+        url: AppConstants.endPoints.form6Submit, // Update this endpoint according to your API
         method: "POST",
         body: body,
         headers: {
@@ -155,4 +160,5 @@ export const {
   useForm4DSubmitMutation,
   useForm4ESubmitMutation,
   useForm5SubmitMutation,
+  useForm6SubmitMutation,
 } = formServicesApi;

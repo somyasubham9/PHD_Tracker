@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm4ESubmitMutation } from "../../Services/formService";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Form4E = () => {
+  const initialState = useSelector((state) => state.user);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const [form4eSubmit, form4eSubmitResponse] = useForm4ESubmitMutation();
   const [manuscriptDetails, setManuscriptDetails] = useState({
     name_of_author: "",
@@ -10,6 +15,41 @@ const Form4E = () => {
     year_of_publications: "",
   });
   const [isAgreed, setIsAgreed] = useState(false);
+
+  useEffect(() => {
+    const getForm4EData = async () => {
+      const token = sessionStorage.getItem("access");
+      if (!token) {
+        console.error("No access token found in session storage");
+        return;
+      }
+
+      try {
+        console.log(initialState.userId);
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/form4E/user/${initialState.userId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = res.data.data;
+        setManuscriptDetails({
+          name_of_author: data.name_of_author,
+          title_of_manuscript: data.title_of_manuscript,
+          conference_name: data.conference_name,
+          year_of_publications: data.year_of_publications,
+        });
+
+        setIsSubmitted(true);
+      } catch (error) {
+        // console.error('Error fetching data:', error.response ? error.response.data : error.message);
+      }
+    };
+    getForm4EData();
+  }, [initialState.userId, isSubmitted]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,12 +62,12 @@ const Form4E = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = {
-     ... manuscriptDetails,
+      ...manuscriptDetails,
     };
     try {
       const response = await form4eSubmit(formData);
       console.log(response);
-      alert("Form submitted successfully. Check the console for the data!");
+      setIsSubmitted(true);
     } catch (error) {
       console.error(error);
       alert("Failed to submit form.");
@@ -53,6 +93,7 @@ const Form4E = () => {
               Name of the authors:
             </label>
             <input
+              readOnly={isSubmitted}
               type="text"
               id={`name_of_author`}
               name="name_of_author"
@@ -69,6 +110,7 @@ const Form4E = () => {
               Title of the manuscript:
             </label>
             <input
+              readOnly={isSubmitted}
               type="text"
               id={`title_of_manuscript`}
               name="title_of_manuscript"
@@ -85,6 +127,7 @@ const Form4E = () => {
               Journal / Conference Name, Publisher:
             </label>
             <input
+              readOnly={isSubmitted}
               type="text"
               id={`conference_name`}
               name="conference_name"
@@ -101,6 +144,7 @@ const Form4E = () => {
               Volume No, Issue No, Year of publication:
             </label>
             <input
+              readOnly={isSubmitted}
               type="text"
               id={`year_of_publications`}
               name="year_of_publications"
@@ -121,8 +165,9 @@ const Form4E = () => {
           </p>
           <label className="inline-flex items-center mt-4">
             <input
+              disabled={isSubmitted}
               type="checkbox"
-              checked={isAgreed}
+              checked={isAgreed || isSubmitted}
               onChange={(e) => setIsAgreed(e.target.checked)}
               className="form-checkbox h-5 w-5 text-blue-600"
             />
@@ -133,7 +178,7 @@ const Form4E = () => {
         </div>
 
         <div>
-          <button
+          {!isSubmitted && <button
             type="submit"
             disabled={!isAgreed}
             className={`text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
@@ -143,7 +188,7 @@ const Form4E = () => {
             }`}
           >
             Submit
-          </button>
+          </button>}
         </div>
       </form>
     </div>

@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useForm3CSubmitMutation } from '../../Services/formService';
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery, useStatusUpdateMutation } from '../../Services/userServices';
 
 const Form3C = () => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
+  const [updateUser] = useStatusUpdateMutation();
   const [scholarName, setScholarName] = useState('');
   const [rollNo, setRollNo] = useState('');
   const [branch, setBranch] = useState('');
@@ -15,7 +16,31 @@ const Form3C = () => {
   const [progress, setProgress] = useState('');
   const [committeeMembers, setCommitteeMembers] = useState(Array(6).fill({ name: '', remarks: '', signature: '' }));
 
-  const [form3cSubmit,form3cSubmitResponse]=useForm3CSubmitMutation();
+  const [form3cSubmit, form3cSubmitResponse] = useForm3CSubmitMutation();
+  const [getUserProfile, { data: userProfile, isLoading, isSuccess }] = useLazyGetUserProfileQuery();
+
+  const [isForm3bSubmitted, setIsForm3bSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile]);
+
+  useEffect(() => {
+    if (isSuccess && userProfile) {
+      const form3bDate = userProfile.data.form3b_submitted;
+      if (form3bDate) {
+        const date = new Date(form3bDate);
+        if (!isNaN(date.getTime())) {
+          setIsForm3bSubmitted(true);
+        }
+      }
+    }
+  }, [userProfile, isSuccess]);
+
+
+
 
   const handleMemberChange = (index, field, value) => {
     const updatedMembers = [...committeeMembers];
@@ -74,6 +99,8 @@ const Form3C = () => {
     try {
       const response = await form3cSubmit(formData);
       console.log(response);
+      await updateUser({ id: initialState.userId, status: "Synopsis" }).unwrap();
+      console.log('Status updated to "Synopsis"');
       setIsSubmitted(true);
     } catch (error) {
       console.error(error);
@@ -82,6 +109,14 @@ const Form3C = () => {
 
     console.log(formData); // Replace this with your actual form submission logic
   };
+
+    if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isForm3bSubmitted) {
+    return <div>Form 3B must be submitted before you can access Form 3C.</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

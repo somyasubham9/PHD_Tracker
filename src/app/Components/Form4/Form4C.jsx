@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm4CSubmitMutation, useLazyGetExaminerProfileQuery } from '../../Services/formService';
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery } from '../../Services/userServices';
 
 const Form4C = () => {
   const initialState = useSelector((state) => state.user);
@@ -24,6 +25,30 @@ const Form4C = () => {
     degree: '',
     supervisor: ''
   });
+  const [getUserProfile, { data: userProfile, isLoading, isSuccess }] = useLazyGetUserProfileQuery();
+
+  const [isForm4bSubmitted, setIsForm4bSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile]);
+
+  useEffect(() => {
+    if (isSuccess && userProfile) {
+      const form4bDate = userProfile.data.form4b_submitted;
+      if (form4bDate) {
+        const date = new Date(form4bDate);
+        if (!isNaN(date.getTime())) {
+          setIsForm4bSubmitted(true);
+        }
+      }
+    }
+  }, [userProfile, isSuccess]);
+
+
+
 
   useEffect(() => {
     triggerExaminers().unwrap().then((res) => {
@@ -110,6 +135,14 @@ const Form4C = () => {
 
   if (isFetching) {
     return <p>Loading examiners...</p>;
+  }
+
+    if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isForm4bSubmitted) {
+    return <div>Form 4B must be submitted before you can access Form 4C.</div>;
   }
 
   return (

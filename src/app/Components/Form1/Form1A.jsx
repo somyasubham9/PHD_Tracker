@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useForm1ASubmitMutation } from "../../Services/formService";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery } from "../../Services/userServices";
 
-const Form1A = () => {
+const Form1A = ({userId}) => {
   const initialState = useSelector((state) => state.user);
   const [form1aSubmit, form1aSubmitResponse] = useForm1ASubmitMutation();
-
+  const [getUserProfile, { data: userProfile, isLoading, isError }] = useLazyGetUserProfileQuery();
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const [qualifications, setQualifications] = useState([
@@ -27,6 +28,12 @@ const Form1A = () => {
   const [studentship, setStudentship] = useState("");
   const [recommender1, setRecommender1] = useState("");
   const [recommender2, setRecommender2] = useState("");
+
+  useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId, getUserProfile]);
 
   useEffect( () => {
     const getForm1aData = async () => {
@@ -60,7 +67,23 @@ const Form1A = () => {
       }
     };
     getForm1aData();
-  },[initialState.userId,isSubmitted]);
+  }, [initialState.userId, isSubmitted]);
+  
+    useEffect(() => {
+    if (userProfile) {
+      const { form1a } = userProfile.data;
+      if (form1a) {
+        setDepartment(form1a.department);
+        setCandidateName(form1a.name);
+        setRollNumber(form1a.rollno);
+        setResearchArea(form1a.area_of_research);
+        setStudentship(form1a.category_of_studentship);
+        setRecommender1(form1a.recommender_1);
+        setRecommender2(form1a.recommender_2);
+        setQualifications(form1a.education || [{ standard: "", university: "", degree: "", year_of_passing: "", cgpa: "", subjects: "" }]);
+      }
+    }
+  }, [userProfile]);
 
   const handleAddRow = () => {
     const newRow = {

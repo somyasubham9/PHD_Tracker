@@ -6,7 +6,7 @@ import axios from "axios";
 const Form6 = () => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
+  const [updateUser] = useStatusUpdateMutation();
   // Form state setup and mutation hook
   const [reportDetails, setReportDetails] = useState({
     date_of_viva_voce: '',
@@ -97,6 +97,8 @@ const Form6 = () => {
 
     try {
       await form6Submit(formData).unwrap();
+      await updateUser({ id: initialState.userId, status: "Defence Closed" }).unwrap();
+      console.log('Status updated to "Defence Closed"');
       setIsSubmitted(true);
     } catch (error) {
       console.error('Error submitting form:', error);

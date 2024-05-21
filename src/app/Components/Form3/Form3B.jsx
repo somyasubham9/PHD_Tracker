@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm3BSubmitMutation } from '../../Services/formService';
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery } from '../../Services/userServices';
 
 const Form3B = () => {
   const initialState = useSelector((state) => state.user);
@@ -21,7 +22,31 @@ const Form3B = () => {
   const [stayPeriodFrom, setStayPeriodFrom] = useState('');
   const [stayPeriodTo, setStayPeriodTo] = useState('');
 
-  const [form3bSubmit,form3bSubmitResponse]=useForm3BSubmitMutation();
+  const [form3bSubmit, form3bSubmitResponse] = useForm3BSubmitMutation();
+  const [getUserProfile, { data: userProfile, isLoading, isSuccess }] = useLazyGetUserProfileQuery();
+
+  const [isForm3aSubmitted, setIsForm3aSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile]);
+
+  useEffect(() => {
+    if (isSuccess && userProfile) {
+      const form3aDate = userProfile.data.form3a_submitted;
+      if (form3aDate) {
+        const date = new Date(form3aDate);
+        if (!isNaN(date.getTime())) {
+          setIsForm3aSubmitted(true);
+        }
+      }
+    }
+  }, [userProfile, isSuccess]);
+
+
+
 
   useEffect(()=>{
     const getForm3BData = async () => {
@@ -91,6 +116,14 @@ const Form3B = () => {
       alert("Failed to submit form.");
     }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isForm3aSubmitted) {
+    return <div>Form 3A must be submitted before you can access Form 3B.</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

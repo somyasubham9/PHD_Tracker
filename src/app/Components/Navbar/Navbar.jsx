@@ -18,7 +18,7 @@ function Navbar() {
   const [sidebar, setSidebar] = useState(false);
   const [dropdown, setDropdown] = useState(false);
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
 
   const showSidebar = () => setSidebar(!sidebar);
   const toggleDropdown = () => setDropdown(!dropdown);
@@ -32,6 +32,7 @@ function Navbar() {
 const handleLogout = () => {
   sessionStorage.removeItem("access");
   sessionStorage.removeItem("refresh");
+  sessionStorage.removeItem("userDetails");
   dispatch(updateIsLoggedIn(false));
   dispatch(updateOnLogout());
 };
@@ -78,7 +79,7 @@ const handleLogout = () => {
                       <CgProfile color="black" />
                       <span>Profile</span>
                     </li>
-                    <li onClick={() => handleLogout}>
+                    <li onClick={handleLogout}>
                       <IoIosLogOut color="black" />
                       <span>Logout</span>
                     </li>

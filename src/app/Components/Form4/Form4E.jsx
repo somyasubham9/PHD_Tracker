@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useForm4ESubmitMutation } from "../../Services/formService";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useStatusUpdateMutation } from "../../Services/userServices";
 
 const Form4E = () => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
+  const [updateUser] = useStatusUpdateMutation();
   const [form4eSubmit, form4eSubmitResponse] = useForm4ESubmitMutation();
   const [manuscriptDetails, setManuscriptDetails] = useState({
     name_of_author: "",
@@ -15,6 +16,31 @@ const Form4E = () => {
     year_of_publications: "",
   });
   const [isAgreed, setIsAgreed] = useState(false);
+
+  const [getUserProfile, { data: userProfile, isLoading, isSuccess }] = useLazyGetUserProfileQuery();
+
+  const [isForm4dSubmitted, setIsForm4dSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile]);
+
+  useEffect(() => {
+    if (isSuccess && userProfile) {
+      const form4dDate = userProfile.data.form4d_submitted;
+      if (form4dDate) {
+        const date = new Date(form4dDate);
+        if (!isNaN(date.getTime())) {
+          setIsForm4dSubmitted(true);
+        }
+      }
+    }
+  }, [userProfile, isSuccess]);
+
+
+
 
   useEffect(() => {
     const getForm4EData = async () => {
@@ -67,12 +93,22 @@ const Form4E = () => {
     try {
       const response = await form4eSubmit(formData);
       console.log(response);
+      await updateUser({ id: initialState.userId, status: "Thesis Submitted" }).unwrap();
+      console.log('Status updated to "Thesis Submitted"');
       setIsSubmitted(true);
     } catch (error) {
       console.error(error);
       alert("Failed to submit form.");
     }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isForm4dSubmitted) {
+    return <div>Form 2 must be submitted before you can access Form 3A.</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm4BSubmitMutation } from '../../Services/formService';
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery } from '../../Services/userServices';
 
 const Form4B = () => {
   const initialState = useSelector((state) => state.user);
@@ -13,7 +14,31 @@ const Form4B = () => {
   const [submissionDate, setSubmissionDate] = useState('');
   const [committeeMembers, setCommitteeMembers] = useState(Array(5).fill({ name: '' }));
 
-  const [form4bSubmit,form4bSubmitResponse]=useForm4BSubmitMutation();
+  const [form4bSubmit, form4bSubmitResponse] = useForm4BSubmitMutation();
+  const [getUserProfile, { data: userProfile, isLoading, isSuccess }] = useLazyGetUserProfileQuery();
+
+  const [isForm4aSubmitted, setIsForm4aSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile]);
+
+  useEffect(() => {
+    if (isSuccess && userProfile) {
+      const form4aDate = userProfile.data.form4a_submitted;
+      if (form4aDate) {
+        const date = new Date(form4aDate);
+        if (!isNaN(date.getTime())) {
+          setIsForm4aSubmitted(true);
+        }
+      }
+    }
+  }, [userProfile, isSuccess]);
+
+
+
 
   const handleMemberChange = (index, field, value) => {
     const updatedMembers = [...committeeMembers];
@@ -80,6 +105,14 @@ has made an oral presentation before the DSC and a general audience. The DSC mem
 the synopsis and heard the oral presentation. The student has completed the required number of academic 
 credits. The DSC is satisfied that he/she can submit the thesis in three months with effect from ${submissionDate}.
 `;
+  
+    if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isForm4aSubmitted) {
+    return <div>Form 4A must be submitted before you can access Form 4B.</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

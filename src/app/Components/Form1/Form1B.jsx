@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useForm1BSubmitMutation } from "../../Services/formService";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery, useStatusUpdateMutation, useUserUpdateMutation } from "../../Services/userServices";
 
-const Form1B = () => {
+const Form1B = ({ checkForm1ASubmission = true , userId}) => {
   const initialState = useSelector((state) => state.user);
   const [form1bSubmit, form1bSubmitResponse] = useForm1BSubmitMutation();
-
+  const [updateUser] = useStatusUpdateMutation();
   const [isSubmitted, setIsSubmitted] = useState(false);
-
+  const [getUserProfile, { data: userProfile, isLoading, isSuccess }] = useLazyGetUserProfileQuery();
   const [loading, setLoading] = useState(true); // New loading state
 
   const [department, setDepartment] = useState("");
@@ -25,6 +26,33 @@ const Form1B = () => {
       remarks: "",
     },
   ]);
+
+  const [isForm1ASubmitted, setIsForm1ASubmitted] = useState(false);
+    useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+    }, [userId, getUserProfile]);
+  
+  useEffect(() => {
+    if (checkForm1ASubmission && initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile, checkForm1ASubmission]);
+
+  useEffect(() => {
+    if (checkForm1ASubmission && isSuccess && userProfile) {
+      const form1aDate = userProfile.data.form1a_submitted;
+      if (form1aDate) {
+        const date = new Date(form1aDate);
+        if (!isNaN(date.getTime())) {
+          setIsForm1ASubmitted(true);
+        }
+      }
+    }
+  }, [userProfile, isSuccess, checkForm1ASubmission]);
+
+  
 
   useEffect(() => {
     const getForm1bData = async () => {
@@ -67,7 +95,21 @@ const Form1B = () => {
     getForm1bData();
   }, [initialState.userId,isSubmitted]);
 
-
+     useEffect(() => {
+    if (userProfile) {
+      const { form1b } = userProfile.data;
+      if (form1b) {
+        setDepartment(form1b.department);
+        setCandidateName(form1b.name);
+        setRollNumber(form1b.rollno);
+        setDateOfEnrollment(form1b.date_of_enrolment);
+        setStudentship(form1b.category_of_studentship);
+        setResearchArea(form1b.area_of_research)
+        setCourses(form1b.course|| [{ standard: "", university: "", degree: "", year_of_passing: "", cgpa: "", subjects: "" }]);
+      }
+    }
+     }, [userProfile]);
+  
   const handleAddCourse = () => {
     const newCourse = {
       subject_id: "",
@@ -106,20 +148,27 @@ const Form1B = () => {
       category_of_studentship: studentship,
       courses,
     };
-
-    await form1bSubmit(formData)
-      .then((res) => {
-        console.log(res);
-        setIsSubmitted(true);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    
+    try {
+      const formResponse = await form1bSubmit(formData).unwrap();
+      console.log(formResponse);
+      
+      // Update status to "Registered" if form submission is successful
+      await updateUser({ id: initialState.userId, status: "Registered" }).unwrap();
+      console.log('Status updated to "Registered"');
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting form or updating status:', error);
+    }
 
   };
 
   if (loading) {
     return <div>Loading...</div>; // Show loading indicator
+  }
+
+ if (!isForm1ASubmitted && checkForm1ASubmission) {
+    return <div>Form 1A must be submitted before you can access Form 1B.</div>;
   }
 
   return (

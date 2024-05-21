@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm3ASubmitMutation } from "../../Services/formService";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery } from "../../Services/userServices";
 
 const Form3A = () => {
   const initialState = useSelector((state) => state.user);
@@ -12,37 +13,66 @@ const Form3A = () => {
   const [willAppear, setWillAppear] = useState(true); // true for 'will appear', false for 'not appear'
 
   const [form3aSubmit, form3aSubmitResponse] = useForm3ASubmitMutation();
+  const [getUserProfile, { data: userProfile, isLoading, isSuccess }] = useLazyGetUserProfileQuery();
 
-useEffect(()=>{
-  const getForm3AData = async () => {
-    const token = sessionStorage.getItem("access");
-    if (!token) {
-      console.error("No access token found in session storage");
-      return;
+  const [isForm2Submitted, setIsForm2Submitted] = useState(false);
+
+  useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
     }
+  }, [initialState.userId, getUserProfile]);
 
-    try {
-      console.log(initialState.userId);
-      const res = await axios.get(
-        `http://127.0.0.1:8000/api/form3A/user/${initialState.userId}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+  useEffect(() => {
+    if (isSuccess && userProfile) {
+      const form2Date = userProfile.data.form2_submitted;
+      if (form2Date) {
+        const date = new Date(form2Date);
+        if (!isNaN(date.getTime())) {
+          setIsForm2Submitted(true);
         }
-      );
-
-      const data = res.data.data;
-      setName(data.name);
-      setSeminarDate(data.seminar_date);
-
-      setIsSubmitted(true);
-    } catch (error) {
-      // console.error('Error fetching data:', error.response ? error.response.data : error.message);
+      }
     }
-  };
-  getForm3AData();
-},[initialState.userId, isSubmitted])
+  }, [userProfile, isSuccess]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isForm2Submitted) {
+    return <div>Form 2 must be submitted before you can access Form 3A.</div>;
+  }
+
+  useEffect(()=>{
+    const getForm3AData = async () => {
+      const token = sessionStorage.getItem("access");
+      if (!token) {
+        console.error("No access token found in session storage");
+        return;
+      }
+
+      try {
+        console.log(initialState.userId);
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/form3A/user/${initialState.userId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = res.data.data;
+        setName(data.name);
+        setSeminarDate(data.seminar_date);
+
+        setIsSubmitted(true);
+      } catch (error) {
+        // console.error('Error fetching data:', error.response ? error.response.data : error.message);
+      }
+    };
+    getForm3AData();
+  },[initialState.userId, isSubmitted])
 
   const handleSubmit = async (event) => {
     event.preventDefault();

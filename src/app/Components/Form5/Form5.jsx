@@ -6,7 +6,7 @@ import axios from "axios";
 const Form5 = () => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
+  const [updateUser] = useStatusUpdateMutation();
   const [candidateDetails, setCandidateDetails] = useState({
     name: '',
     rollno: '',
@@ -88,6 +88,8 @@ const Form5 = () => {
     try {
       const response = await form5Submit(formData);
       console.log(response);
+      await updateUser({ id: initialState.userId, status: "Defence" }).unwrap();
+      console.log('Status updated to "Defence"');
       setIsSubmitted(true);
     } catch (error) {
       console.error(error);
@@ -99,7 +101,6 @@ const Form5 = () => {
     <div className="container mx-auto px-4 py-8">
       <form className="bg-slate-100 p-8 shadow-md rounded-lg space-y-6" onSubmit={handleSubmit}>
         <h2 className="text-2xl font-bold text-gray-700">Recommendation of Examiners on Ph.D. Thesis</h2>
-        
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name of the Candidate:</label>
           <input readOnly={isSubmitted} type="text" id="name" value={candidateDetails.name}

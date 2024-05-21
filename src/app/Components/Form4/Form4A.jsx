@@ -21,7 +21,7 @@ const Form4A = () => {
   };
 
   const [form4aSubmit, form4aSubmitResponse] = useForm4ASubmitMutation();
-    const [formVisible, setFormVisible] = useState(false);
+  const [formVisible, setFormVisible] = useState(false);
   const [getUserProfile, { data: userProfile }] = useLazyGetUserProfileQuery();
 
     useEffect(() => {

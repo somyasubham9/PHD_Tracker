@@ -13,6 +13,30 @@ const Form4D = () => {
     notSupervisor: false,
     notRelated: false,
   });
+  const [getUserProfile, { data: userProfile, isLoading, isSuccess }] = useLazyGetUserProfileQuery();
+
+  const [isForm4cSubmitted, setIsForm4cSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile]);
+
+  useEffect(() => {
+    if (isSuccess && userProfile) {
+      const form4cDate = userProfile.data.form4c_submitted;
+      if (form4cDate) {
+        const date = new Date(form4cDate);
+        if (!isNaN(date.getTime())) {
+          setIsForm4cSubmitted(true);
+        }
+      }
+    }
+  }, [userProfile, isSuccess]);
+
+
+
 
   const handleChange = (field) => {
     setCertifications((prev) => ({ ...prev, [field]: !prev[field] }));
@@ -84,6 +108,14 @@ const Form4D = () => {
     - The Examiner was not one of my supervisors.
     - The Examiner is not directly related to me (The term directly related to me includes spouse, children, sister, brother, grandchildren, nephew, niece, grandparents, uncle, aunt, first cousin, son-in-law, daughter-in-law, and nephew, niece, grandniece, grandnephew of supervisor’s wife/husband).
   `;
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isForm4cSubmitted) {
+    return <div>Form 4C must be submitted before you can access Form 4D.</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

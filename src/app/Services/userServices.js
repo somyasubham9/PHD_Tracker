@@ -25,7 +25,7 @@ export const userServicesApi = createApi({
           return {
               url: `${AppConstants.endPoints.updateUser}/${id}/update/`,
               method: "PATCH",
-              body: { area_of_research },
+              body: { area_of_research},
               headers: {
                   "Content-type": "application/json; charset=UTF-8",
                   Authorization: `Bearer ${sessionStorage.getItem("access")}`,
@@ -34,6 +34,21 @@ export const userServicesApi = createApi({
       },
   }),
 
+  statusUpdate: builder.mutation({
+      query: ({ id, status }) => {
+          console.log(status, id);
+          console.log(`Making PATCH request to: ${AppConstants.endPoints.updateUser}/${id}`);
+          return {
+              url: `${AppConstants.endPoints.updateUser}/${id}/update/`,
+              method: "PATCH",
+              body: {status},
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                  Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+              },
+          };
+      },
+  }),
 
 
     userLogin: builder.mutation({
@@ -55,8 +70,17 @@ export const userServicesApi = createApi({
         },
       }),
     }),
+
+    getUserList: builder.query({
+      query: () => ({
+        url: `${AppConstants.endPoints.updateUser}/list/`,
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useUserRegisterMutation, useUserLoginMutation, useUserUpdateMutation, useLazyGetUserProfileQuery } =
+export const { useUserRegisterMutation, useUserLoginMutation, useUserUpdateMutation, useStatusUpdateMutation , useLazyGetUserProfileQuery, useLazyGetUserListQuery } =
   userServicesApi;

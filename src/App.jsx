@@ -56,6 +56,7 @@ import {
   updateUpdatedDate,
 } from "./app/Redux/slices/userSlice";
 import { useDispatch } from "react-redux";
+import StudentProfile from "./app/Components/Profile/AdminProfile";
 
 function App() {
   const dispatch = useDispatch();
@@ -95,6 +96,7 @@ function App() {
             <Route path="/form5" element={<Form5Layout />} />
             <Route path="/form6" element={<Form6Layout />} />
             <Route path="/profile" element={<ProfileLayout />} />
+            <Route path="/profile/:userId" element={<StudentProfile />} />
             <Route path="*" element={<Navigate replace to="/" />} />
           </Route>
           <Route path="*" element={<NotFound />} />

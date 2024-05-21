@@ -48,8 +48,8 @@ export const userServicesApi = createApi({
     }),
 
     getUserProfile: builder.query({
-      query: () => ({
-        url: AppConstants.endPoints.userProfile,
+      query: (id) => ({
+        url: `${AppConstants.endPoints.updateUser}/${id}/`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("access")}`,
         },
@@ -58,5 +58,5 @@ export const userServicesApi = createApi({
   }),
 });
 
-export const { useUserRegisterMutation, useUserLoginMutation, useUserUpdateMutation } =
+export const { useUserRegisterMutation, useUserLoginMutation, useUserUpdateMutation, useLazyGetUserProfileQuery } =
   userServicesApi;

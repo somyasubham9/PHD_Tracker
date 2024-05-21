@@ -33,6 +33,7 @@ import {
   updateDateJoined,
   updateCreatedDate,
   updateUpdatedDate,
+  updateAreaOfResearch,
 } from "../../Redux/slices/userSlice";
 
 const AuthPage = () => {
@@ -70,7 +71,6 @@ const AuthPage = () => {
         lastName: loginUserResponse.data.user.last_name,
         userEmail: loginUserResponse.data.user.email,
         userId: loginUserResponse.data.user.id,
-        // add other necessary details
       };
 
       sessionStorage.setItem("userDetails", JSON.stringify(userDetails));
@@ -86,7 +86,7 @@ const AuthPage = () => {
       dispatch(updateStatus(loginUserResponse.data.user.status));
       dispatch(updateDepartment(loginUserResponse.data.user.department));
       dispatch(updateSupervisor(loginUserResponse.data.user.supervisor));
-
+      dispatch(updateAreaOfResearch(loginUserResponse.data.user.area_of_research));
       // Assuming form submission statuses are included in the response
       dispatch(
         updateform1a_submitted(loginUserResponse.data.user.form1a_submitted)

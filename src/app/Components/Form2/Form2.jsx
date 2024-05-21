@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm2SubmitMutation } from "../../Services/formService";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery } from "../../Services/userServices";
 
 const Form2 = () => {
   const initialState = useSelector((state) => state.user);
@@ -16,6 +17,8 @@ const Form2 = () => {
   const [supervisorRemarks, setSupervisorRemarks] = useState("");
 
   const [form2Submit, form2SubmitResponse] = useForm2SubmitMutation();
+  const [formVisible, setFormVisible] = useState(false);
+  const [getUserProfile, { data: userProfile }] = useLazyGetUserProfileQuery();
 
   useEffect(() => {
     const getForm2Data = async () => {
@@ -63,6 +66,26 @@ const Form2 = () => {
     getForm2Data();
   }, [initialState.userId, isSubmitted]);
 
+    useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile]);
+
+  useEffect(() => {
+    if (userProfile && userProfile.data.form1b_submitted) {
+      const form1bDate = new Date(userProfile.data.form1b_submitted);
+      const currentDate = new Date();
+      const yearDiff = currentDate.getFullYear() - form1bDate.getFullYear();
+
+      if (yearDiff >= 2) {
+        setFormVisible(true);
+      } else {
+        console.log("Form2 cannot be shown yet. The required time since Form1B submission has not elapsed.");
+      }
+    }
+  }, [userProfile]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -88,7 +111,7 @@ const Form2 = () => {
     }
   };
 
-  return (
+  return formVisible ? (
     <div className="container mx-auto px-4 py-8">
       <form
         onSubmit={handleSubmit}
@@ -278,6 +301,10 @@ const Form2 = () => {
           )}
         </div>
       </form>
+    </div>
+  ) : (
+      <div className="text-center mt-10">
+      <h2>The eligibility criteria for displaying Form 2 has not been met yet.</h2>
     </div>
   );
 };

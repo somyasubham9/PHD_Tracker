@@ -27,7 +27,34 @@ import AuthPage from "./app/Components/Auth/Auth";
 import LayoutWithNavbar from "./app/Components/NavBarLayout";
 import ProtectedRoute from "./app/Components/ProtectedRoute";
 import NotFound from "./app/Page/NotFound";
-import { updateFirstName, updateIsAdmin, updateIsLoggedIn, updateLastName, updateUserEmail, updateUserId } from "./app/Redux/slices/userSlice";
+import {
+  updateIsLoggedIn,
+  updateIsAdmin,
+  updateFirstName,
+  updateLastName,
+  updateUserEmail,
+  updateUserId,
+  updateDepartment,
+  updateSupervisor,
+  updateAreaOfResearch,
+  updateStatus,
+  updateform1a_submitted,
+  updateform1b_submitted,
+  updateform2_submitted,
+  updateform3a_submitted,
+  updateform3b_submitted,
+  updateform3c_submitted,
+  updateform4a_submitted,
+  updateform4b_submitted,
+  updateform4c_submitted,
+  updateform4d_submitted,
+  updateform4e_submitted,
+  updateform5_submitted,
+  updateform6_submitted,
+  updateDateJoined,
+  updateCreatedDate,
+  updateUpdatedDate,
+} from "./app/Redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 
 function App() {
@@ -37,12 +64,11 @@ function App() {
     const userDetails = JSON.parse(sessionStorage.getItem("userDetails"));
     if (userDetails) {
       dispatch(updateIsLoggedIn(userDetails.isLoggedIn));
-      dispatch(updateFirstName(userDetails.firstName));
       dispatch(updateIsAdmin(userDetails.isAdmin));
+      dispatch(updateFirstName(userDetails.firstName));
       dispatch(updateLastName(userDetails.lastName));
       dispatch(updateUserEmail(userDetails.userEmail));
       dispatch(updateUserId(userDetails.userId));
-      // dispatch other user details
     }
   }, [dispatch]);
 

@@ -1,13 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm4ASubmitMutation } from '../../Services/formService';
+import { useLazyGetUserProfileQuery } from '../../Services/userServices';
+import { useSelector } from 'react-redux';
 
 const Form4A = () => {
+  const initialState = useSelector((state) => state.user);
   const [scholarName, setScholarName] = useState('');
   const [rollNo, setRollNo] = useState('');
   const [department, setDepartment] = useState('');
   const [committeeMembers, setCommitteeMembers] = useState(Array(5).fill({ name: '', signature: '' }));
 
-  const [form4aSubmit,form4aSubmitResponse]=useForm4ASubmitMutation();
+  const [form4aSubmit, form4aSubmitResponse] = useForm4ASubmitMutation();
+    const [formVisible, setFormVisible] = useState(false);
+  const [getUserProfile, { data: userProfile }] = useLazyGetUserProfileQuery();
+
+    useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile]);
+
+  useEffect(() => {
+    if (userProfile && userProfile.data.form3c_submitted) {
+      const form3cDate = new Date(userProfile.data.form3c_submitted);
+      const currentDate = new Date();
+      const yearDiff = currentDate.getFullYear() - form3cDate.getFullYear();
+      const monthDiff = currentDate.getMonth() - form3cDate.getMonth() + yearDiff * 12;
+
+      if(monthDiff >= 3) {
+        setFormVisible(true);
+      } else {
+        console.log("Form4 cannot be shown yet. The required time since Form1B submission has not elapsed.");
+      }
+    }
+  }, [userProfile]);
 
   const handleMemberChange = (index, field, value) => {
     const updatedMembers = [...committeeMembers];
@@ -39,7 +65,7 @@ const Form4A = () => {
     the evaluation process.
     `;
 
-  return (
+  return formVisible ? (
     <div className="container mx-auto px-4 py-8">
       <form className="bg-slate-100 p-8 shadow-md rounded-lg space-y-6" onSubmit={handleSubmit}>
         <h2 className="text-2xl font-bold text-gray-700">Proposal for Submission of Synopsis of PhD Thesis</h2>
@@ -84,6 +110,10 @@ const Form4A = () => {
           </button>
         </div>
       </form>
+    </div>
+  ) : (
+      <div className="text-center mt-10">
+      <h2>The eligibility criteria for displaying Form 4 has not been met yet.</h2>
     </div>
   );
 }

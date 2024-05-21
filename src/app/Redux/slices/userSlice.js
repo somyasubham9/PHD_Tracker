@@ -26,6 +26,7 @@ const initialState = {
   date_joined: "",
   created_date: "",
   updated_date: "",
+  area_of_research: ""
 };
 
 const user = createSlice({
@@ -60,7 +61,7 @@ const user = createSlice({
       state.supervisor = payload;
     },
     updateAreaOfResearch: (state, { payload }) => {
-      state.areaOfResearch = payload;
+      state.area_of_research = payload;
     },
 
     updateform1a_submitted: (state, { payload }) => {

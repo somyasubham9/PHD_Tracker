@@ -1,25 +1,34 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillEdit } from "react-icons/ai";
-import { updateAreaOfResearch } from "../../Redux/slices/userSlice"
-import {
-  useUserUpdateMutation
-} from "../../Services/userServices";
+import { updateAreaOfResearch } from "../../Redux/slices/userSlice";
+import { useUserUpdateMutation, useLazyGetUserProfileQuery } from "../../Services/userServices";
 
 const SocialProfile = () => {
   const initialState = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);
-  const [researchArea, setResearchArea] = useState(initialState.areaOfResearch || '');
-  const dispatch = useDispatch()
-  const [updateUser, updateUserResponse] = useUserUpdateMutation();
+  const [researchArea, setResearchArea] = useState('');
+
+  const [getUserProfile, { data: userProfile, isSuccess }] = useLazyGetUserProfileQuery();
+  const [updateUser] = useUserUpdateMutation();
+
+  useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile]);
+
+  useEffect(() => {
+    if (isSuccess && userProfile) {
+      setResearchArea(userProfile.data.area_of_research || '');
+      dispatch(updateAreaOfResearch(userProfile.area_of_research));
+    }
+  }, [userProfile, isSuccess, dispatch]);
 
   const handleSave = async () => {
     try {
-      console.log(researchArea)
-      const id = initialState.userId
-      console.log(typeof(id));
-      const result = await updateUser({ id, area_of_research: researchArea });
-
+      const result = await updateUser({ id: initialState.userId, area_of_research: researchArea });
       if (result.error) {
         console.log('Error updating user:', result.error);
       } else {
@@ -30,7 +39,7 @@ const SocialProfile = () => {
     } catch (error) {
       console.error('Failed to update:', error);
     }
-  };
+  }
   console.log(initialState);
   return (
     <div className="h-screen w-full">

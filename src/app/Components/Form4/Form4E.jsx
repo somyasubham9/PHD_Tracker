@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useForm4ESubmitMutation } from "../../Services/formService";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { useStatusUpdateMutation } from "../../Services/userServices";
+import { useLazyGetUserProfileQuery, useStatusUpdateMutation } from "../../Services/userServices";
 
-const Form4E = () => {
+const Form4E = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [updateUser] = useStatusUpdateMutation();
@@ -22,13 +22,13 @@ const Form4E = () => {
   const [isForm4dSubmitted, setIsForm4dSubmitted] = useState(false);
 
   useEffect(() => {
-    if (initialState.userId) {
+    if (checkFormSubmission && initialState.userId) {
       getUserProfile(initialState.userId);
     }
   }, [initialState.userId, getUserProfile]);
 
   useEffect(() => {
-    if (isSuccess && userProfile) {
+    if (checkFormSubmission && isSuccess && userProfile) {
       const form4dDate = userProfile.data.form4d_submitted;
       if (form4dDate) {
         const date = new Date(form4dDate);
@@ -39,7 +39,26 @@ const Form4E = () => {
     }
   }, [userProfile, isSuccess]);
 
+  useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId, getUserProfile]);
 
+  useEffect(() => {
+    if (userProfile) {
+      const { form4e } = userProfile.data;
+      console.log(form4e);
+      if (form4e) {
+         setManuscriptDetails({
+          name_of_author: form4e.name_of_author,
+          title_of_manuscript: form4e.title_of_manuscript,
+          conference_name: form4e.conference_name,
+          year_of_publications: form4e.year_of_publications,
+        });
+      }
+    }
+  }, [userProfile]);
 
 
   useEffect(() => {
@@ -106,7 +125,7 @@ const Form4E = () => {
     return <div>Loading...</div>;
   }
 
-  if (!isForm4dSubmitted) {
+  if (checkFormSubmission && !isForm4dSubmitted) {
     return <div>Form 2 must be submitted before you can access Form 3A.</div>;
   }
 

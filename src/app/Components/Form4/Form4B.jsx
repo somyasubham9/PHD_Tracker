@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from '../../Services/userServices';
 
-const Form4B = () => {
+const Form4B = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -20,13 +20,13 @@ const Form4B = () => {
   const [isForm4aSubmitted, setIsForm4aSubmitted] = useState(false);
 
   useEffect(() => {
-    if (initialState.userId) {
+    if (checkFormSubmission && initialState.userId) {
       getUserProfile(initialState.userId);
     }
   }, [initialState.userId, getUserProfile]);
 
   useEffect(() => {
-    if (isSuccess && userProfile) {
+    if (checkFormSubmission && isSuccess && userProfile) {
       const form4aDate = userProfile.data.form4a_submitted;
       if (form4aDate) {
         const date = new Date(form4aDate);
@@ -37,6 +37,25 @@ const Form4B = () => {
     }
   }, [userProfile, isSuccess]);
 
+  useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId, getUserProfile]);
+
+  useEffect(() => {
+    if (userProfile) {
+      const { form4b } = userProfile.data;
+      console.log(form4b);
+      if (form4b) {
+        setScholarName(form4b.name);
+        setRollNo(form4b.rollno);
+        setDepartment(form4b.department);
+        setSubmissionDate(form4b.thesis_date);
+        setCommitteeMembers(form4b.committee);
+      }
+    }
+  }, [userProfile]);
 
 
 
@@ -110,7 +129,7 @@ credits. The DSC is satisfied that he/she can submit the thesis in three months 
     return <div>Loading...</div>;
   }
 
-  if (!isForm4aSubmitted) {
+  if (checkFormSubmission && !isForm4aSubmitted) {
     return <div>Form 4A must be submitted before you can access Form 4B.</div>;
   }
 

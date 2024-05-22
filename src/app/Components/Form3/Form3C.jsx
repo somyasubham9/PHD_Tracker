@@ -4,7 +4,8 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery, useStatusUpdateMutation } from '../../Services/userServices';
 
-const Form3C = () => {
+const Form3C = ({ checkFormSubmission = true, userId }) => {
+  console.log(userId);
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [updateUser] = useStatusUpdateMutation();
@@ -22,13 +23,13 @@ const Form3C = () => {
   const [isForm3bSubmitted, setIsForm3bSubmitted] = useState(false);
 
   useEffect(() => {
-    if (initialState.userId) {
+    if (checkFormSubmission && initialState.userId) {
       getUserProfile(initialState.userId);
     }
   }, [initialState.userId, getUserProfile]);
 
   useEffect(() => {
-    if (isSuccess && userProfile) {
+    if (checkFormSubmission && isSuccess && userProfile) {
       const form3bDate = userProfile.data.form3b_submitted;
       if (form3bDate) {
         const date = new Date(form3bDate);
@@ -37,9 +38,30 @@ const Form3C = () => {
         }
       }
     }
-  }, [userProfile, isSuccess]);
+  }, [userProfile, isSuccess, checkFormSubmission]);
 
+  useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId, getUserProfile]);
 
+    useEffect(() => {
+    if (userProfile) {
+      const { form3c } = userProfile.data;
+      console.log(form3c);
+      if (form3c) {
+         setScholarName(form3c.name);
+        setRollNo(form3c.rollno);
+        setBranch(form3c.branch);
+        setDateOfSeminar(form3c.date_of_seminar);
+        setTopicOfTheTalk(form3c.topic_of_talk);
+        setProgress(form3c.progress);
+        setCommitteeMembers(form3c.committee)
+  
+      }
+    }
+  }, [userProfile]);
 
 
   const handleMemberChange = (index, field, value) => {
@@ -114,7 +136,7 @@ const Form3C = () => {
     return <div>Loading...</div>;
   }
 
-  if (!isForm3bSubmitted) {
+  if (checkFormSubmission && !isForm3bSubmitted) {
     return <div>Form 3B must be submitted before you can access Form 3C.</div>;
   }
 

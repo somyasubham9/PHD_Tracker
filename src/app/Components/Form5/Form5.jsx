@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useForm5SubmitMutation } from '../../Services/formService';
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery, useStatusUpdateMutation } from '../../Services/userServices';
 
-const Form5 = () => {
+const Form5 = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [updateUser] = useStatusUpdateMutation();
@@ -20,7 +21,7 @@ const Form5 = () => {
     is_modification_final: false,
     is_rejected: false,
   });
-
+    const [getUserProfile, { data: userProfile, isLoading, isSuccess }] = useLazyGetUserProfileQuery();
   const [form5Submit, form5SubmitResponse] = useForm5SubmitMutation();
 
   const handleInputChange = (field, value) => {
@@ -36,6 +37,33 @@ const Form5 = () => {
       is_rejected: field === 'is_rejected',
     });
   };
+
+  useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId, getUserProfile]);
+
+  useEffect(() => {
+    if (userProfile) {
+      const { form5 } = userProfile.data;
+      console.log(form5);
+      if (form5) {
+          setCandidateDetails({
+          name: form5.name,
+          rollno: form5.rollno,
+          title_of_thesis: form5.title_of_thesis
+        });
+        setRecommendations({
+          is_academic_standard: form5.is_academic_standard,
+          is_viva: form5.is_viva,
+          is_modification: form5.is_modification,
+          is_modification_final: form5.is_modification_final,
+          is_rejected: form5.is_rejected,
+        });
+      }
+    }
+  }, [userProfile]);
 
   useEffect(() => {
     const getForm5Data = async () => {

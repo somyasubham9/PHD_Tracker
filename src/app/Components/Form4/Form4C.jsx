@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from '../../Services/userServices';
 
-const Form4C = () => {
+const Form4C = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -30,13 +30,13 @@ const Form4C = () => {
   const [isForm4bSubmitted, setIsForm4bSubmitted] = useState(false);
 
   useEffect(() => {
-    if (initialState.userId) {
+    if (checkFormSubmission && initialState.userId) {
       getUserProfile(initialState.userId);
     }
   }, [initialState.userId, getUserProfile]);
 
   useEffect(() => {
-    if (isSuccess && userProfile) {
+    if (checkFormSubmission && isSuccess && userProfile) {
       const form4bDate = userProfile.data.form4b_submitted;
       if (form4bDate) {
         const date = new Date(form4bDate);
@@ -47,7 +47,32 @@ const Form4C = () => {
     }
   }, [userProfile, isSuccess]);
 
+   useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId, getUserProfile]);
 
+  useEffect(() => {
+    if (userProfile) {
+      const { form4c } = userProfile.data;
+      console.log(form4c);
+      if (form4c) {
+         setCandidateDetails({
+          name: form4c.name,
+          rollno: form4c.rollno,
+          department: form4c.department,
+          date_of_registeration: form4c.date_of_registeration,
+          title_of_thesis: form4c.title_of_thesis,
+          degree: form4c.degree,
+          supervisor: form4c.supervisor,
+        });
+        setSelectedIndianExaminer(form4c.indian_examiner?.id || '');
+        setSelectedForeignExaminer(form4c.foreign_examiner?.id || '');
+        setCommitteeMembers(form4c.committee);
+      }
+    }
+  }, [userProfile]);
 
 
   useEffect(() => {
@@ -141,7 +166,7 @@ const Form4C = () => {
     return <div>Loading...</div>;
   }
 
-  if (!isForm4bSubmitted) {
+  if (checkFormSubmission && !isForm4bSubmitted) {
     return <div>Form 4B must be submitted before you can access Form 4C.</div>;
   }
 

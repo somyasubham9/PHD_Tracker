@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useForm4DSubmitMutation } from "../../Services/formService";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery } from "../../Services/userServices";
 
-const Form4D = () => {
+const Form4D = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -18,13 +19,13 @@ const Form4D = () => {
   const [isForm4cSubmitted, setIsForm4cSubmitted] = useState(false);
 
   useEffect(() => {
-    if (initialState.userId) {
+    if (checkFormSubmission && initialState.userId) {
       getUserProfile(initialState.userId);
     }
   }, [initialState.userId, getUserProfile]);
 
   useEffect(() => {
-    if (isSuccess && userProfile) {
+    if (checkFormSubmission && isSuccess && userProfile) {
       const form4cDate = userProfile.data.form4c_submitted;
       if (form4cDate) {
         const date = new Date(form4cDate);
@@ -35,7 +36,27 @@ const Form4D = () => {
     }
   }, [userProfile, isSuccess]);
 
+  useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId, getUserProfile]);
 
+  useEffect(() => {
+    if (userProfile) {
+      const { form4d } = userProfile.data;
+      console.log(form4d);
+      if (form4d) {
+         if (form4d.is_accepted) {
+          setCertifications({
+            noJointPublication: true,
+            notSupervisor: true,
+            notRelated: true,
+          });
+        }
+      }
+    }
+  }, [userProfile]);
 
 
   const handleChange = (field) => {
@@ -113,7 +134,7 @@ const Form4D = () => {
     return <div>Loading...</div>;
   }
 
-  if (!isForm4cSubmitted) {
+  if (checkFormSubmission && !isForm4cSubmitted) {
     return <div>Form 4C must be submitted before you can access Form 4D.</div>;
   }
 

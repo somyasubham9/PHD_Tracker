@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from '../../Services/userServices';
 
-const Form3B = () => {
+const Form3B = ({ checkFormSubmission = true , userId}) => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -28,13 +28,13 @@ const Form3B = () => {
   const [isForm3aSubmitted, setIsForm3aSubmitted] = useState(false);
 
   useEffect(() => {
-    if (initialState.userId) {
+    if (checkFormSubmission && initialState.userId) {
       getUserProfile(initialState.userId);
     }
   }, [initialState.userId, getUserProfile]);
 
   useEffect(() => {
-    if (isSuccess && userProfile) {
+    if (checkFormSubmission && isSuccess && userProfile) {
       const form3aDate = userProfile.data.form3a_submitted;
       if (form3aDate) {
         const date = new Date(form3aDate);
@@ -43,10 +43,34 @@ const Form3B = () => {
         }
       }
     }
-  }, [userProfile, isSuccess]);
+  }, [userProfile, isSuccess, checkFormSubmission]);
 
+  useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId, getUserProfile]);
 
-
+  useEffect(() => {
+    if (userProfile) {
+      const { form3b } = userProfile.data;
+      if (form3b) {
+        setFullName(form3b.name);
+        setSemester(form3b.semester);
+        setSession(form3b.session);
+        setRollNo(form3b.rollno);
+        setCategory(form3b.category);
+        setDateOfEnrolment(form3b.date_of_enrolment);
+        setDepartment(form3b.department);
+        setRegistrationComplete(form3b.is_registration_completed);
+        setPermanentAddress(form3b.permanent_address);
+        setFeeDate(form3b.fees_date);
+        setBroadAreaOfResearch(form3b.area_of_research)
+        setStayPeriodFrom(form3b.institute_stay_date_from);
+        setStayPeriodTo(form3b.institute_stay_date_to);
+      }
+    }
+  }, [userProfile]);
 
   useEffect(()=>{
     const getForm3BData = async () => {
@@ -121,7 +145,7 @@ const Form3B = () => {
     return <div>Loading...</div>;
   }
 
-  if (!isForm3aSubmitted) {
+  if (checkFormSubmission && !isForm3aSubmitted) {
     return <div>Form 3A must be submitted before you can access Form 3B.</div>;
   }
 

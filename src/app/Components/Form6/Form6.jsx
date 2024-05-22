@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useForm6SubmitMutation } from '../../Services/formService'; 
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useLazyGetUserProfileQuery, useStatusUpdateMutation } from '../../Services/userServices';
 
-const Form6 = () => {
+const Form6 = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [updateUser] = useStatusUpdateMutation();
@@ -21,7 +22,7 @@ const Form6 = () => {
     number_of_people: '',
     performance: '',
   });
-
+    const [getUserProfile, { data: userProfile, isSuccess }] = useLazyGetUserProfileQuery();
   const [comments, setComments] = useState([{ comment: "" }]);
   const [form6Submit, { isLoading }] = useForm6SubmitMutation();
 
@@ -42,6 +43,35 @@ const Form6 = () => {
   const handleAddComment = () => {
     setComments([...comments, { comment: "" }]);
   };
+
+  useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId, getUserProfile]);
+
+  useEffect(() => {
+    if (userProfile) {
+      const { form6 } = userProfile.data;
+      console.log(form6);
+      if (form6) {
+          setReportDetails({
+          date_of_viva_voce: form6.date_of_viva_voce,
+          name: form6.name,
+          rollno: form6.rollno,
+          department: form6.department,
+          title_of_thesis: form6.title_of_thesis,
+          degree: form6.degree,
+          indian_examiner: form6.indian_examiner,
+          foreign_examiner: form6.foreign_examiner,
+          supervisor: form6.supervisor,
+          number_of_people: form6.number_of_people,
+          performance: form6.performance,
+          });
+        setComments(Array.isArray(form6.comment) ? form6.comment : [{ comment: "" }]);
+      }
+    }
+  }, [userProfile]);
 
   useEffect(() => {
     const getForm6Data = async () => {

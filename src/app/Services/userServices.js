@@ -50,6 +50,53 @@ export const userServicesApi = createApi({
       },
   }),
 
+  indianUpdate: builder.mutation({
+      query: ({ id, comments_by_indian }) => {
+          console.log(comments_by_indian, id);
+          console.log(`Making PATCH request to: ${AppConstants.endPoints.updateUser}/${id}`);
+          return {
+              url: `${AppConstants.endPoints.updateUser}/${id}/update/`,
+              method: "PATCH",
+              body: {comments_by_indian},
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                  Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+              },
+          };
+      },
+  }),
+
+    thesisUpdate: builder.mutation({
+      query: ({ id, thesis_url }) => {
+          console.log(thesis_url, id);
+          console.log(`Making PATCH request to: ${AppConstants.endPoints.updateUser}/${id}`);
+          return {
+              url: `${AppConstants.endPoints.updateUser}/${id}/update/`,
+              method: "PATCH",
+              body: {thesis_url},
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                  Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+              },
+          };
+      },
+  }),
+
+    foreignUpdate: builder.mutation({
+      query: ({ id, comments_by_foreign }) => {
+          console.log(comments_by_foreign, id);
+          console.log(`Making PATCH request to: ${AppConstants.endPoints.updateUser}/${id}`);
+          return {
+              url: `${AppConstants.endPoints.updateUser}/${id}/update/`,
+              method: "PATCH",
+              body: {comments_by_foreign},
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8",
+                  Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+              },
+          };
+      },
+  }),
 
     userLogin: builder.mutation({
       query: (body) => ({
@@ -82,5 +129,5 @@ export const userServicesApi = createApi({
   }),
 });
 
-export const { useUserRegisterMutation, useUserLoginMutation, useUserUpdateMutation, useStatusUpdateMutation , useLazyGetUserProfileQuery, useLazyGetUserListQuery } =
+export const { useUserRegisterMutation, useUserLoginMutation, useUserUpdateMutation, useStatusUpdateMutation , useForeignUpdateMutation, useIndianUpdateMutation, useThesisUpdateMutation, useLazyGetUserProfileQuery, useLazyGetUserListQuery } =
   userServicesApi;

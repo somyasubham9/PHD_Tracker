@@ -3,7 +3,7 @@ import { useForm4ASubmitMutation } from '../../Services/formService';
 import { useLazyGetUserProfileQuery } from '../../Services/userServices';
 import { useSelector } from 'react-redux';
 
-const Form4A = () => {
+const Form4A = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -24,14 +24,34 @@ const Form4A = () => {
   const [formVisible, setFormVisible] = useState(false);
   const [getUserProfile, { data: userProfile }] = useLazyGetUserProfileQuery();
 
-    useEffect(() => {
-    if (initialState.userId) {
+  useEffect(() => {
+    if (checkFormSubmission && initialState.userId) {
       getUserProfile(initialState.userId);
     }
   }, [initialState.userId, getUserProfile]);
 
   useEffect(() => {
-    if (userProfile && userProfile.data.form3c_submitted) {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId, getUserProfile]);
+
+    useEffect(() => {
+    if (userProfile) {
+      const { form4a } = userProfile.data;
+      console.log(form4a);
+      if (form4a) {
+        setScholarName(form4a.name);
+        setRollNo(form4a.rollno);
+        setDepartment(form4a.department);
+        setCommitteeMembers(form4a.committee);
+      }
+    }
+  }, [userProfile]);
+
+  useEffect(() => {
+    if (checkFormSubmission) {
+      if (userProfile && userProfile.data.form3c_submitted) {
       const form3cDate = new Date(userProfile.data.form3c_submitted);
       const currentDate = new Date();
       const yearDiff = currentDate.getFullYear() - form3cDate.getFullYear();
@@ -43,6 +63,10 @@ const Form4A = () => {
         console.log("Form4 cannot be shown yet. The required time since Form1B submission has not elapsed.");
       }
     }
+    } else {
+      setFormVisible(true)
+    }
+    
   }, [userProfile]);
 
   useEffect(() => {

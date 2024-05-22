@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery, useStatusUpdateMutation, useUserUpdateMutation } from "../../Services/userServices";
 
-const Form1B = ({ checkForm1ASubmission = true , userId}) => {
+const Form1B = ({ checkFormSubmission = true , userId}) => {
   const initialState = useSelector((state) => state.user);
   const [form1bSubmit, form1bSubmitResponse] = useForm1BSubmitMutation();
   const [updateUser] = useStatusUpdateMutation();
@@ -35,13 +35,13 @@ const Form1B = ({ checkForm1ASubmission = true , userId}) => {
     }, [userId, getUserProfile]);
   
   useEffect(() => {
-    if (checkForm1ASubmission && initialState.userId) {
+    if (checkFormSubmission && initialState.userId) {
       getUserProfile(initialState.userId);
     }
-  }, [initialState.userId, getUserProfile, checkForm1ASubmission]);
+  }, [initialState.userId, getUserProfile, checkFormSubmission]);
 
   useEffect(() => {
-    if (checkForm1ASubmission && isSuccess && userProfile) {
+    if (checkFormSubmission && isSuccess && userProfile) {
       const form1aDate = userProfile.data.form1a_submitted;
       if (form1aDate) {
         const date = new Date(form1aDate);
@@ -50,7 +50,7 @@ const Form1B = ({ checkForm1ASubmission = true , userId}) => {
         }
       }
     }
-  }, [userProfile, isSuccess, checkForm1ASubmission]);
+  }, [userProfile, isSuccess, checkFormSubmission]);
 
   
 
@@ -95,7 +95,7 @@ const Form1B = ({ checkForm1ASubmission = true , userId}) => {
     getForm1bData();
   }, [initialState.userId,isSubmitted]);
 
-     useEffect(() => {
+  useEffect(() => {
     if (userProfile) {
       const { form1b } = userProfile.data;
       if (form1b) {
@@ -108,7 +108,7 @@ const Form1B = ({ checkForm1ASubmission = true , userId}) => {
         setCourses(form1b.course|| [{ standard: "", university: "", degree: "", year_of_passing: "", cgpa: "", subjects: "" }]);
       }
     }
-     }, [userProfile]);
+  }, [userProfile]);
   
   const handleAddCourse = () => {
     const newCourse = {
@@ -167,7 +167,7 @@ const Form1B = ({ checkForm1ASubmission = true , userId}) => {
     return <div>Loading...</div>; // Show loading indicator
   }
 
- if (!isForm1ASubmitted && checkForm1ASubmission) {
+ if (!isForm1ASubmitted && checkFormSubmission) {
     return <div>Form 1A must be submitted before you can access Form 1B.</div>;
   }
 

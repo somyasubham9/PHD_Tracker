@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from "../../Services/userServices";
 
-const Form3A = () => {
+const Form3A = ({ checkFormSubmission = true , userId}) => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
   
@@ -17,14 +17,20 @@ const Form3A = () => {
 
   const [isForm2Submitted, setIsForm2Submitted] = useState(false);
 
-  useEffect(() => {
-    if (initialState.userId) {
+    useEffect(() => {
+      if (userId) {
+        getUserProfile(userId);
+      }
+    }, [userId, getUserProfile]);
+  
+   useEffect(() => {
+    if (checkFormSubmission && initialState.userId) {
       getUserProfile(initialState.userId);
     }
-  }, [initialState.userId, getUserProfile]);
+  }, [initialState.userId, getUserProfile, checkFormSubmission]);
 
   useEffect(() => {
-    if (isSuccess && userProfile) {
+    if (checkFormSubmission && isSuccess && userProfile) {
       const form2Date = userProfile.data.form2_submitted;
       if (form2Date) {
         const date = new Date(form2Date);
@@ -33,16 +39,19 @@ const Form3A = () => {
         }
       }
     }
-  }, [userProfile, isSuccess]);
+  }, [userProfile, isSuccess, checkFormSubmission]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
-  if (!isForm2Submitted) {
-    return <div>Form 2 must be submitted before you can access Form 3A.</div>;
-  }
-
+  useEffect(() => {
+    if (userProfile) {
+      const { form3a } = userProfile.data;
+      if (form3a) {
+        setName(form3a.name);
+        setSeminarDate(form3a.seminar_date);
+      }
+    }
+  }, [userProfile]);
+  
   useEffect(()=>{
     const getForm3AData = async () => {
       const token = sessionStorage.getItem("access");
@@ -95,6 +104,14 @@ const Form3A = () => {
   const displaySentence = `This is to certify that Mr./Ms. ${name} ${
     willAppear ? "will" : "will not"
   } appear the final registration seminar for Ph.D. program which is scheduled to be held on ${seminarDate}.`;
+
+    if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (checkFormSubmission && !isForm2Submitted) {
+    return <div>Form 2 must be submitted before you can access Form 3A.</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

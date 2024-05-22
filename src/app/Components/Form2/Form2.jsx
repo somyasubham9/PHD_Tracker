@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from "../../Services/userServices";
 
-const Form2 = () => {
+const Form2 = ({ checkFormSubmission = true , userId}) => {
   const initialState = useSelector((state) => state.user);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [claimMonth, setClaimMonth] = useState("");
@@ -20,6 +20,12 @@ const Form2 = () => {
   const [formVisible, setFormVisible] = useState(false);
   const [getUserProfile, { data: userProfile }] = useLazyGetUserProfileQuery();
 
+      useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+      }, [userId, getUserProfile]);
+  
   useEffect(() => {
     const getForm2Data = async () => {
       const token = sessionStorage.getItem("access");
@@ -66,25 +72,45 @@ const Form2 = () => {
     getForm2Data();
   }, [initialState.userId, isSubmitted]);
 
-    useEffect(() => {
-    if (initialState.userId) {
+  useEffect(() => {
+    if (checkFormSubmission && initialState.userId) {
       getUserProfile(initialState.userId);
     }
-  }, [initialState.userId, getUserProfile]);
+  }, [initialState.userId, getUserProfile, checkFormSubmission]);
 
   useEffect(() => {
-    if (userProfile && userProfile.data.form1b_submitted) {
-      const form1bDate = new Date(userProfile.data.form1b_submitted);
-      const currentDate = new Date();
-      const yearDiff = currentDate.getFullYear() - form1bDate.getFullYear();
-
-      if (yearDiff >= 2) {
-        setFormVisible(true);
-      } else {
-        console.log("Form2 cannot be shown yet. The required time since Form1B submission has not elapsed.");
+    if (checkFormSubmission) {
+      
+      if (userProfile && userProfile.data.form1b_submitted) {
+        const form1bDate = new Date(userProfile.data.form1b_submitted);
+        const currentDate = new Date();
+        const yearDiff = currentDate.getFullYear() - form1bDate.getFullYear();
+  
+        if (yearDiff >= 2) {
+          setFormVisible(true);
+        } else {
+          console.log("Form2 cannot be shown yet. The required time since Form1B submission has not elapsed.");
+        }
       }
+    } else {
+      setFormVisible(true)
     }
   }, [userProfile]);
+
+       useEffect(() => {
+    if (userProfile) {
+      const { form2 } = userProfile.data;
+      if (form2) {
+        setClaimMonth(form2.month_year);
+        setScholarName(form2.name);
+        setRollNumber(form2.rollno);
+        setDepartment(form2.department);
+        setHoursWorked(form2.work_done);
+        setNatureOfWork(form2.nature_of_work);
+        setSupervisorRemarks(form2.remarks_by_supervisor);
+      }
+    }
+     }, [userProfile]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

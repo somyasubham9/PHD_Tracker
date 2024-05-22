@@ -3,6 +3,7 @@ import { useForm1BSubmitMutation } from "../../Services/formService";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery, useStatusUpdateMutation, useUserUpdateMutation } from "../../Services/userServices";
+import UploadForm from "../UploadForm/uploadForm";
 
 const Form1B = ({ checkFormSubmission = true , userId}) => {
   const initialState = useSelector((state) => state.user);
@@ -368,6 +369,7 @@ const Form1B = ({ checkFormSubmission = true , userId}) => {
             Submit
           </button>
         )}
+        <UploadForm formName='form1B' userId={userId} fieldName='softcopy_url'/>
       </form>
     </div>
   );

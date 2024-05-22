@@ -3,6 +3,7 @@ import { useForm3CSubmitMutation } from '../../Services/formService';
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery, useStatusUpdateMutation } from '../../Services/userServices';
+import UploadForm from '../UploadForm/uploadForm';
 
 const Form3C = ({ checkFormSubmission = true, userId }) => {
   console.log(userId);
@@ -210,6 +211,7 @@ const Form3C = ({ checkFormSubmission = true, userId }) => {
             </button>
           )}
         </div>
+        <UploadForm formName='form3C' userId={userId} fieldName='softcopy_url'/>
       </form>
     </div>
   );

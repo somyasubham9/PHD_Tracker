@@ -8,6 +8,7 @@ const initialState = {
   userEmail: "",
   userId: "",
   status: "",
+  roll_no:"",
   department:"",
   supervisor: "",
   form1a_submitted: "",
@@ -54,8 +55,11 @@ const user = createSlice({
     updateStatus: (state, { payload }) => {
       state.status = payload;
     },
+    updateRollNo: (state, { payload }) => {
+      state.roll_no = payload;
+    },
     updateDepartment: (state, { payload }) => {
-      state.status = payload;
+      state.department = payload;
     },
     updateSupervisor: (state, { payload }) => {
       state.supervisor = payload;
@@ -124,6 +128,7 @@ export const {
   updateUserEmail,
   updateUserId,
   updateStatus,
+  updateRollNo,
   updateDepartment,
   updateAreaOfResearch,
   updateSupervisor,

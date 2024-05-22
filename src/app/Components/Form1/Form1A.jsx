@@ -3,6 +3,7 @@ import { useForm1ASubmitMutation } from "../../Services/formService";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from "../../Services/userServices";
+import UploadForm from "../UploadForm/uploadForm";
 
 const Form1A = ({userId}) => {
   const initialState = useSelector((state) => state.user);
@@ -42,7 +43,6 @@ const Form1A = ({userId}) => {
         console.error('No access token found in session storage');
         return;
       }
-
       try {
         console.log(initialState.userId)
         const res = await axios.get(`http://127.0.0.1:8000/api/form1A/user/${initialState.userId}/`, {
@@ -376,6 +376,7 @@ const Form1A = ({userId}) => {
             </button>
           </div>
         )}
+      <UploadForm formName='form1A' userId={userId} fieldName='softcopy_url'/>
       </form>
   </div>
   );

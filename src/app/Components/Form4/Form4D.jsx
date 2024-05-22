@@ -3,6 +3,7 @@ import { useForm4DSubmitMutation } from "../../Services/formService";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from "../../Services/userServices";
+import UploadForm from "../UploadForm/uploadForm";
 
 const Form4D = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
@@ -202,6 +203,7 @@ const Form4D = ({ checkFormSubmission = true, userId }) => {
             Submit
           </button>}
         </div>
+        <UploadForm formName='form4D' userId={userId} fieldName='softcopy_url'/>
       </form>
     </div>
   );

@@ -18,7 +18,7 @@ function Navbar() {
   const [sidebar, setSidebar] = useState(false);
   const [dropdown, setDropdown] = useState(false);
 
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
   const toggleDropdown = () => setDropdown(!dropdown);
@@ -27,24 +27,25 @@ function Navbar() {
   const navigate = useNavigate();
 
   const initialState = useSelector((state) => state.user);
-  
 
-const handleLogout = () => {
-  sessionStorage.removeItem("access");
-  sessionStorage.removeItem("refresh");
-  sessionStorage.removeItem("userDetails");
-  dispatch(updateIsLoggedIn(false));
-  dispatch(updateOnLogout());
-};
-  
-//   useEffect(() => {
-//   if (!initialState.isLoggedIn) {
-//     console.log('Navigating to /auth...');
-//     navigate('/auth');
-//   }
-// }, [initialState.isLoggedIn, navigate]);
+  const handleLogout = () => {
+    sessionStorage.removeItem("access");
+    sessionStorage.removeItem("refresh");
+    sessionStorage.removeItem("userDetails");
+    dispatch(updateIsLoggedIn(false));
+    dispatch(updateOnLogout());
+  };
 
+  //   useEffect(() => {
+  //   if (!initialState.isLoggedIn) {
+  //     console.log('Navigating to /auth...');
+  //     navigate('/auth');
+  //   }
+  // }, [initialState.isLoggedIn, navigate]);
 
+  useEffect(() => {
+    setIsAdmin(initialState.isAdmin);
+  }, []);
 
   let menuRef = useRef();
 

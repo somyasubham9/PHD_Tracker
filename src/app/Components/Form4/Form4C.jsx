@@ -3,6 +3,7 @@ import { useForm4CSubmitMutation, useLazyGetExaminerProfileQuery } from '../../S
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from '../../Services/userServices';
+import UploadForm from '../UploadForm/uploadForm';
 
 const Form4C = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
@@ -245,6 +246,7 @@ const Form4C = ({ checkFormSubmission = true, userId }) => {
         {!isSubmitted && <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
           Submit
         </button>}
+        <UploadForm formName='form4C' userId={userId} fieldName='softcopy_url'/>
       </form>
     </div>
   );

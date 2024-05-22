@@ -34,6 +34,7 @@ import {
   updateCreatedDate,
   updateUpdatedDate,
   updateAreaOfResearch,
+  updateRollNo,
 } from "../../Redux/slices/userSlice";
 
 const AuthPage = () => {
@@ -74,7 +75,7 @@ const AuthPage = () => {
       };
 
       sessionStorage.setItem("userDetails", JSON.stringify(userDetails));
-
+      console.log(loginUserResponse.data.user);
       dispatch(updateIsLoggedIn(true));
       dispatch(updateCreatedDate(loginUserResponse.data.user.created_at));
       dispatch(updateUpdatedDate(loginUserResponse.data.user.updated_at));
@@ -87,6 +88,7 @@ const AuthPage = () => {
       dispatch(updateDepartment(loginUserResponse.data.user.department));
       dispatch(updateSupervisor(loginUserResponse.data.user.supervisor));
       dispatch(updateAreaOfResearch(loginUserResponse.data.user.area_of_research));
+      dispatch(updateRollNo(loginUserResponse.data.user.roll_no));
       // Assuming form submission statuses are included in the response
       dispatch(
         updateform1a_submitted(loginUserResponse.data.user.form1a_submitted)

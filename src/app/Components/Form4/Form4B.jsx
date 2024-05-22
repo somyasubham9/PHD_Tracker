@@ -3,6 +3,7 @@ import { useForm4BSubmitMutation } from '../../Services/formService';
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from '../../Services/userServices';
+import UploadForm from '../UploadForm/uploadForm';
 
 const Form4B = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
@@ -185,6 +186,7 @@ credits. The DSC is satisfied that he/she can submit the thesis in three months 
             </button>
           )}
         </div>
+        <UploadForm formName='form4B' userId={userId} fieldName='softcopy_url'/>
       </form>
     </div>
   );

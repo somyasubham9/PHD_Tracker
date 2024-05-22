@@ -15,8 +15,11 @@ import Form4D from '../Form4/Form4D';
 import Form4E from '../Form4/Form4E';
 import Form6 from '../Form6/Form6';
 import Form5 from '../Form5/Form5';
+import UploadForm from '../UploadForm/uploadForm';
+import { useSelector } from "react-redux";
 
 const StudentProfile = () => {
+  const initialState = useSelector((state) => state.user);
   const { userId } = useParams(); // Extract userId from URL
   const [getUserProfile, { data: userProfile, isLoading, isError, isFetched }] = useLazyGetUserProfileQuery();
   const [selectedForm, setSelectedForm] = useState(null);
@@ -120,6 +123,10 @@ const renderFormComponent = () => {
             {userProfile.data.area_of_research || "No research area specified."}
           </p>
         </div>
+      </div>
+      <div className='p-20'>
+
+      {initialState.isAdmin && <UploadForm formName='user' userId={userId} fieldName='thesis_url'/>}
       </div>
 
       <div>

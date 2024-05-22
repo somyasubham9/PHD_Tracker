@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm4ASubmitMutation } from '../../Services/formService';
 import { useLazyGetUserProfileQuery } from '../../Services/userServices';
 import { useSelector } from 'react-redux';
+import UploadForm from '../UploadForm/uploadForm';
 
 const Form4A = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
@@ -225,6 +226,7 @@ const Form4A = ({ checkFormSubmission = true, userId }) => {
             </button>
           )}
         </div>
+        <UploadForm formName='form4A' userId={userId} fieldName='softcopy_url'/>
       </form>
     </div>
   ) : (

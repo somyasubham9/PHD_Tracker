@@ -6,7 +6,11 @@ import { useLazyGetUserProfileQuery } from "../../Services/userServices";
 import UploadForm from "../UploadForm/uploadForm";
 
 const Form1A = ({userId}) => {
+
   const initialState = useSelector((state) => state.user);
+  if(!userId){
+    userId=initialState.userId;
+  }
   const [form1aSubmit, form1aSubmitResponse] = useForm1ASubmitMutation();
   const [getUserProfile, { data: userProfile, isLoading, isError }] = useLazyGetUserProfileQuery();
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -34,6 +38,7 @@ const Form1A = ({userId}) => {
     if (userId) {
       getUserProfile(userId);
     }
+    // alert(initialState.userId)
   }, [userId, getUserProfile]);
 
   useEffect( () => {

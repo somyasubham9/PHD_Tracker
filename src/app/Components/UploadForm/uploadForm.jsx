@@ -79,6 +79,7 @@ const UploadForm = (props) => {
         setUploadedUrl(fetched_url);
         }
     }
+    
     getDownloadURL();
     console.log(initialState.isAdmin);
   },[])

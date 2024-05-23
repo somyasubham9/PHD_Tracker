@@ -157,10 +157,10 @@ const AuthPage = () => {
 
     await loginUser(jsonData).then((res) => {
       console.log(res);
+      toast.success('Login Successfull')
     });
 
     console.log("Handling Sign In");
-    toast.success('Login Successfull')
   };
 
   const handleSignup = async () => {
@@ -279,10 +279,10 @@ const AuthPage = () => {
           )}
           <div className="mt-6">
             <input
-              type="email"
-              placeholder="Enter your email"
+              type="text"
+              placeholder="Enter your Roll Number"
               className="w-full px-4 py-3 border rounded"
-              value={email}
+              value={rollNo}
               onChange={(e) => setEmail(e.target.value)}
               required
             />

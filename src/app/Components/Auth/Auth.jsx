@@ -47,6 +47,8 @@ const AuthPage = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [department, setDepartment] = useState("");
+  const [rollNo, setRollNo] = useState("");
+  const [supervisor, setSupervisor] = useState("");
 
   const [registerUser, registerUserResponse] = useUserRegisterMutation();
 
@@ -138,6 +140,7 @@ const AuthPage = () => {
 
       //Navigate
       navigate("/");
+      
     }
     // navigate()
   }, [registerUserResponse.isSuccess, loginUserResponse.isSuccess]);
@@ -172,6 +175,8 @@ const AuthPage = () => {
     formData.append("email", email);
     formData.append("password", password);
     formData.append("department", department);
+    formData.append("roll_no", rollNo);
+    formData.append("supervisor", supervisor);
 
     const jsonData = Object.fromEntries(formData.entries());
 
@@ -258,6 +263,26 @@ const AuthPage = () => {
               placeholder="Enter your email"
               className="w-full px-4 py-3 border rounded"
               value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mt-6">
+            <input
+              type="text"
+              placeholder="Enter your Roll Number"
+              className="w-full px-4 py-3 border rounded"
+              value={rollNo}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mt-6">
+            <input
+              type="text"
+              placeholder="Enter your Supervisor"
+              className="w-full px-4 py-3 border rounded"
+              value={supervisor}
               onChange={(e) => setEmail(e.target.value)}
               required
             />

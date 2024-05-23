@@ -78,10 +78,6 @@ function Navbar() {
               {dropdown && (
                 <div className="dropdown-menu" ref={menuRef}>
                   <ul>
-                    <li onClick={handleDelete}>
-                      <CgProfile color="black" />
-                      <span>Profile</span>
-                    </li>
                     <li onClick={handleLogout}>
                       <IoIosLogOut color="black" />
                       <span>Logout</span>

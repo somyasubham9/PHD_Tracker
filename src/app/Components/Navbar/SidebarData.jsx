@@ -1,5 +1,4 @@
 import React from 'react';
-import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 import * as IoIcons from 'react-icons/io';
 
@@ -12,79 +11,80 @@ export const SidebarData = [
   },
   {
     title: 'Form 1(a)',
-    path: '/reports',
+    path: '/form1A',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 1(b)',
-    path: '/reports',
+    path: '/form1B',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
+    
   },
   {
     title: 'Form 2',
-    path: '/reports',
+    path: '/form2',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 3(a)',
-    path: '/reports',
+    path: '/form3A',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 3(b)',
-    path: '/reports',
+    path: '/form3B',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 3(c)',
-    path: '/reports',
+    path: '/form3C',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 4(a)',
-    path: '/reports',
+    path: '/form4A',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 4(b)',
-    path: '/reports',
+    path: '/form4B',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 4(c)',
-    path: '/reports',
+    path: '/form4C',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 4(d)',
-    path: '/reports',
+    path: '/form4D',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 4(e)',
-    path: '/reports',
+    path: '/form4E',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 5',
-    path: '/reports',
+    path: '/form5',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
   {
     title: 'Form 6',
-    path: '/reports',
+    path: '/form6',
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },

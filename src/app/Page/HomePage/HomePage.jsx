@@ -1,5 +1,11 @@
 import React from "react";
+import SocialProfile from "../../Components/Profile/HeaderComponent";
 
-export const HomePage = () => {
-  return <div>HomePage</div>;
+const HomePage = () => {
+  return (
+    <>
+      <SocialProfile/>
+    </>
+  );
 };
+export default HomePage;

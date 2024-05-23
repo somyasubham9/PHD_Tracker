@@ -212,7 +212,7 @@ const Form3C = ({ checkFormSubmission = true, userId }) => {
             </button>
           )}
         </div>
-        <UploadForm formName='form3C' userId={userId} fieldName='softcopy_url'/>
+        <UploadForm formName='form3C' userId={userId} fieldName='softcopy_url' buttonId='f3c_upload' />
       </form>
     </div>
   );

@@ -255,6 +255,26 @@ const AuthPage = () => {
                   required
                 />
               </div>
+              <div className="mt-6">
+                <input
+                  type="text"
+                  placeholder="Enter your Roll Number"
+                  className="w-full px-4 py-3 border rounded"
+                  value={rollNo}
+                  onChange={(e) => setRollNo(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="mt-6">
+                <input
+                  type="text"
+                  placeholder="Enter your Supervisor"
+                  className="w-full px-4 py-3 border rounded"
+                  value={supervisor}
+                  onChange={(e) => setSupervisor(e.target.value)}
+                  required
+                />
+              </div>
             </>
           )}
           <div className="mt-6">
@@ -267,27 +287,6 @@ const AuthPage = () => {
               required
             />
           </div>
-          <div className="mt-6">
-            <input
-              type="text"
-              placeholder="Enter your Roll Number"
-              className="w-full px-4 py-3 border rounded"
-              value={rollNo}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mt-6">
-            <input
-              type="text"
-              placeholder="Enter your Supervisor"
-              className="w-full px-4 py-3 border rounded"
-              value={supervisor}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
           <div className="mt-4">
             <input
               type="password"

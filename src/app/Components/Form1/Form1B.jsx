@@ -353,7 +353,7 @@ const Form1B = ({ checkFormSubmission = true , userId}) => {
               )}
             </div>
           ))}
-          {!isSubmitted && (
+          {(!isSubmitted && !initialState.isAdmin) && (
             <button
               type="button"
               onClick={handleAddCourse}
@@ -364,7 +364,7 @@ const Form1B = ({ checkFormSubmission = true , userId}) => {
           )}
         </div>
 
-        {!isSubmitted && (
+        {!isSubmitted && !initialState.isAdmin && (
           <button
             type="submit"
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

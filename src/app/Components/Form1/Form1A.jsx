@@ -277,7 +277,7 @@ const Form1A = ({userId}) => {
               )}
             </div>
           ))}
-          {!isSubmitted && (
+          {(!isSubmitted && !initialState.isAdmin) && (
             <button
               type="button"
               onClick={handleAddRow}
@@ -372,7 +372,7 @@ const Form1A = ({userId}) => {
           />
         </div>
 
-        {!isSubmitted && (
+        {!isSubmitted && !initialState.isAdmin && (
           <div>
             <button
               type="submit"

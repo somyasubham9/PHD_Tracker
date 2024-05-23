@@ -180,11 +180,11 @@ const Form6 = ({ checkFormSubmission = true, userId }) => {
               )}
             </div>
           ))}
-          {!isSubmitted && <button  type="button" onClick={handleAddComment} className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+          {!isSubmitted && !initialState.isAdmin && <button  type="button" onClick={handleAddComment} className="mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
             Add Comment
           </button>}
         </div>
-        { !isSubmitted && <button
+        { !isSubmitted && !initialState.isAdmin && <button
           type="submit"
           disabled={isLoading}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

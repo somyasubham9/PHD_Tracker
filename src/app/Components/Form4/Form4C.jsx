@@ -245,7 +245,7 @@ const Form4C = ({ checkFormSubmission = true, userId }) => {
           ))}
         </div>
 
-        {!isSubmitted && <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        {!isSubmitted && !initialState.isAdmin && <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
           Submit
         </button>}
         <UploadForm formName='form4C' userId={userId} fieldName='softcopy_url' buttonId='f4c_upload' />

@@ -236,7 +236,7 @@ const Form4E = ({ checkFormSubmission = true, userId }) => {
         </div>
 
         <div>
-          {!isSubmitted && <button
+          {!isSubmitted && !initialState.isAdmin && <button
             type="submit"
             disabled={!isAgreed}
             className={`text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${

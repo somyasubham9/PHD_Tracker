@@ -257,6 +257,7 @@ const AuthPage = () => {
               </div>
               <div className="mt-6">
                 <input
+                
                   type="text"
                   placeholder="Enter your Roll Number"
                   className="w-full px-4 py-3 border rounded"

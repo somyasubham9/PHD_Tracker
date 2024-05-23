@@ -181,11 +181,11 @@ const AuthPage = () => {
     const jsonData = Object.fromEntries(formData.entries());
 
     await registerUser(jsonData).then((res) => {
+      toast.success("Registration Successfull");
       console.log(res);
     });
     // await updateUser()
     console.log("Handling signup");
-    toast.success("Registration Successfull");
     // Add your signup logic here
   };
 

@@ -126,7 +126,7 @@ const renderFormComponent = () => {
       </div>
       <div className='p-20'>
 
-      {initialState.isAdmin && <UploadForm formName='user' userId={userId} fieldName='thesis_url'/>}
+      {initialState.isAdmin && <UploadForm formName='user' userId={userId} fieldName='thesis_url' buttonId='thesis_upload'/>}
       </div>
 
       <div>

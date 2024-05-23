@@ -280,10 +280,10 @@ const AuthPage = () => {
           )}
           <div className="mt-6">
             <input
-              type="text"
-              placeholder="Enter your Roll Number"
+              type="email"
+              placeholder="Enter your Email"
               className="w-full px-4 py-3 border rounded"
-              value={rollNo}
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />

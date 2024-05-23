@@ -188,7 +188,7 @@ credits. The DSC is satisfied that he/she can submit the thesis in three months 
             </button>
           )}
         </div>
-        <UploadForm formName='form4B' userId={userId} fieldName='softcopy_url'/>
+        <UploadForm formName='form4B' userId={userId} fieldName='softcopy_url' buttonId='f4b_upload' />
       </form>
     </div>
   );

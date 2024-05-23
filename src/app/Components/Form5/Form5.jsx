@@ -205,7 +205,7 @@ const Form5 = ({ checkFormSubmission = true, userId }) => {
             Submit
           </button>}
         </div>
-        <UploadForm formName='form5' userId={userId} fieldName='softcopy_url'/>
+        <UploadForm formName='form5' userId={userId} fieldName='softcopy_url' buttonId='f5_upload' />
       </form> : <div className="text-center mt-10">
       <h2>The eligibility criteria for displaying Form 5 has not been met yet.</h2>
     </div>}

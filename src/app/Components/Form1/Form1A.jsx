@@ -382,7 +382,7 @@ const Form1A = ({userId}) => {
             </button>
           </div>
         )}
-      <UploadForm formName='form1A' userId={userId} fieldName='softcopy_url'/>
+        <UploadForm formName='form1A' userId={userId} fieldName='softcopy_url' buttonId='f1a_upload' />
       </form>
   </div>
   );

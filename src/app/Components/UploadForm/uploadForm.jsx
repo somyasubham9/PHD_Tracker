@@ -4,7 +4,7 @@ import "./uploadForm.css"; // Import the CSS file
 import { useSelector } from "react-redux";
 
 const UploadForm = (props) => {
-  const { formName,userId, fieldName } = props;
+  const { formName,userId, fieldName, buttonId } = props;
   const initialState = useSelector((state) => state.user);
 
   const [pdf, setPdf] = useState(null);
@@ -130,12 +130,12 @@ const UploadForm = (props) => {
     <div className="container">
       {initialState.isAdmin && <h2 className="title">{fieldName==='thesis_url' ? `Upload Thesis` : `Upload Form`}</h2>}
       {initialState.isAdmin && <div className="file-input">
-        <label htmlFor="pdf-upload" className="choose-file-label">
+        <label htmlFor={buttonId} className="choose-file-label">
           Choose File
         </label>
         <input
           type="file"
-          id="pdf-upload" // Add an id to the input
+          id={buttonId} // Add an id to the input
           onChange={handlePdfChange}
         />
         {fileName && <span className="file-name">{fileName}</span>}{" "}

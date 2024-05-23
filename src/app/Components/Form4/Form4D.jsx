@@ -205,7 +205,7 @@ const Form4D = ({ checkFormSubmission = true, userId }) => {
             Submit
           </button>}
         </div>
-        <UploadForm formName='form4D' userId={userId} fieldName='softcopy_url'/>
+        <UploadForm formName='form4D' userId={userId} fieldName='softcopy_url' buttonId='f4d_upload' />
       </form>
     </div>
   );

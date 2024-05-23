@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery, useStatusUpdateMutation } from '../../Services/userServices';
 import UploadForm from '../UploadForm/uploadForm';
+import { toast } from 'react-toastify';
 
 const Form5 = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
@@ -40,15 +41,18 @@ const Form5 = ({ checkFormSubmission = true, userId }) => {
   };
 
   useEffect(() => {
+    if(!userId)
+      userId=initialState.userId;
     if (userId) {
       getUserProfile(userId);
+      console.log(userProfile)
     }
   }, [userId, getUserProfile]);
 
   useEffect(() => {
+
     if (userProfile) {
       const { form5 } = userProfile.data;
-      console.log(form5);
       if (form5) {
           setCandidateDetails({
           name: form5.name,
@@ -124,11 +128,12 @@ const Form5 = ({ checkFormSubmission = true, userId }) => {
       console.error(error);
       alert("Failed to submit form.");
     }
+    toast.success("Submitted Successfull");
   };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <form className="bg-slate-100 p-8 shadow-md rounded-lg space-y-6" onSubmit={handleSubmit}>
+     {(userProfile?.data.comments_by_indian && userProfile?.data.comments_by_foreign) ? <form className="bg-slate-100 p-8 shadow-md rounded-lg space-y-6" onSubmit={handleSubmit}>
         <h2 className="text-2xl font-bold text-gray-700">Recommendation of Examiners on Ph.D. Thesis</h2>
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name of the Candidate:</label>
@@ -201,7 +206,9 @@ const Form5 = ({ checkFormSubmission = true, userId }) => {
           </button>}
         </div>
         <UploadForm formName='form5' userId={userId} fieldName='softcopy_url'/>
-      </form>
+      </form> : <div className="text-center mt-10">
+      <h2>The eligibility criteria for displaying Form 5 has not been met yet.</h2>
+    </div>}
     </div>
   );
 }

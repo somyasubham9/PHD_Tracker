@@ -3,6 +3,8 @@ import { useForm4ASubmitMutation } from '../../Services/formService';
 import { useLazyGetUserProfileQuery } from '../../Services/userServices';
 import { useSelector } from 'react-redux';
 import UploadForm from '../UploadForm/uploadForm';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Form4A = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
@@ -96,6 +98,7 @@ const Form4A = ({ checkFormSubmission = true, userId }) => {
         setCommitteeMembers(data.committee);
 
         setIsSubmitted(true);
+        
       } catch (error) {
         // console.error('Error fetching data:', error.response ? error.response.data : error.message);
       }
@@ -119,6 +122,7 @@ const Form4A = ({ checkFormSubmission = true, userId }) => {
       console.error(error);
       alert("Failed to submit form.");
     }
+    toast.success("Submitted Successfull");
   };
 
   const synopsisSubmissionParagraph = `

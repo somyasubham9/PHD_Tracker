@@ -13,6 +13,7 @@ import { IconContext } from "react-icons";
 import { AdminSidebarData } from "./AdminSideBarData";
 import { useDispatch, useSelector } from "react-redux";
 import { updateIsLoggedIn, updateOnLogout } from "../../Redux/slices/userSlice";
+import { toast } from "react-toastify";
 
 function Navbar() {
   const [sidebar, setSidebar] = useState(false);
@@ -34,6 +35,7 @@ function Navbar() {
     sessionStorage.removeItem("userDetails");
     dispatch(updateIsLoggedIn(false));
     dispatch(updateOnLogout());
+    toast.success("Logout Successfull");
   };
 
   //   useEffect(() => {

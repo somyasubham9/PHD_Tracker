@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery, useStatusUpdateMutation } from '../../Services/userServices';
 import UploadForm from '../UploadForm/uploadForm';
+import { toast } from 'react-toastify';
 
 const Form6 = ({ checkFormSubmission = true, userId }) => {
   const initialState = useSelector((state) => state.user);
@@ -135,6 +136,7 @@ const Form6 = ({ checkFormSubmission = true, userId }) => {
       console.error('Error submitting form:', error);
       alert('Failed to submit form. See console for details.');
     }
+    toast.success("Submitted Successfull");
   };
 
   return (

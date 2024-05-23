@@ -57,6 +57,8 @@ import {
 } from "./app/Redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 import StudentProfile from "./app/Components/Profile/AdminProfile";
+import ERepo from "./app/Page/ERepo/ERepo";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const dispatch = useDispatch();
@@ -79,6 +81,7 @@ function App() {
         <LayoutWithNavbar />
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/erepo" element={<ERepo />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/studentlist" element={<StudentList />} />
             <Route path="/" element={<HomePage />} />
@@ -101,6 +104,7 @@ function App() {
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <ToastContainer/>
       </main>
     </Router>
   );

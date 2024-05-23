@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from '../../Services/userServices';
 import UploadForm from '../UploadForm/uploadForm';
+import { toast } from 'react-toastify';
 
 const Form3B = ({ checkFormSubmission = true , userId}) => {
   const initialState = useSelector((state) => state.user);
@@ -140,6 +141,7 @@ const Form3B = ({ checkFormSubmission = true , userId}) => {
       console.error(error);
       alert("Failed to submit form.");
     }
+    toast.success("Submitted Successfull");
   };
 
   if (isLoading) {

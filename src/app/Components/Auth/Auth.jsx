@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../../assets/login.jpg";
 import {
   useUserRegisterMutation,
   useUserLoginMutation,
   useUserUpdateMutation,
 } from "../../Services/userServices";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   updateIsLoggedIn,
@@ -36,6 +36,8 @@ import {
   updateAreaOfResearch,
   updateRollNo,
 } from "../../Redux/slices/userSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true); // Toggle between login and signup forms
@@ -49,7 +51,6 @@ const AuthPage = () => {
   const [registerUser, registerUserResponse] = useUserRegisterMutation();
 
   const [loginUser, loginUserResponse] = useUserLoginMutation();
-  // const [updateUser, updateUserResponse] = useUserUpdateMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -63,7 +64,7 @@ const AuthPage = () => {
       sessionStorage.setItem("access", loginUserResponse.data.access);
       sessionStorage.setItem("refresh", loginUserResponse.data.refresh);
       //   console.log(loginUserResponse);
-      
+
       // Storing user details
       const userDetails = {
         isLoggedIn: true,
@@ -87,7 +88,9 @@ const AuthPage = () => {
       dispatch(updateStatus(loginUserResponse.data.user.status));
       dispatch(updateDepartment(loginUserResponse.data.user.department));
       dispatch(updateSupervisor(loginUserResponse.data.user.supervisor));
-      dispatch(updateAreaOfResearch(loginUserResponse.data.user.area_of_research));
+      dispatch(
+        updateAreaOfResearch(loginUserResponse.data.user.area_of_research)
+      );
       dispatch(updateRollNo(loginUserResponse.data.user.roll_no));
       // Assuming form submission statuses are included in the response
       dispatch(
@@ -154,6 +157,7 @@ const AuthPage = () => {
     });
 
     console.log("Handling Sign In");
+    toast.success('Login Successfull')
   };
 
   const handleSignup = async () => {
@@ -176,11 +180,17 @@ const AuthPage = () => {
     });
     // await updateUser()
     console.log("Handling signup");
+    toast.success("Registration Successfull");
     // Add your signup logic here
   };
 
   const switchForm = () => {
     setIsLogin(!isLogin);
+  };
+
+  // Function to handle the button click and route to "/erepo"
+  const handleNavigateToErepo = () => {
+    navigate("/erepo");
   };
 
   return (
@@ -196,6 +206,14 @@ const AuthPage = () => {
       {/* Form Container */}
       <div className="flex items-center justify-center w-1/2 p-12 bg-white">
         <div className="w-full max-w-md">
+          {/* Button to route to "/erepo" */}
+          <button
+            className="absolute top-8 right-8 text-white bg-[#FB6A55] text-bold rounded px-3 py-2 hover:scale-105 hover:bg-red-500"
+            onClick={handleNavigateToErepo}
+          >
+            E-Repository
+          </button>
+
           <h2 className="text-3xl font-bold text-center">
             {isLogin ? "Login" : "Sign Up"}
           </h2>

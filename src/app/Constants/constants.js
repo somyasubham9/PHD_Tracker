@@ -6,6 +6,7 @@ export const AppConstants = {
     convertToken: "user-covert-token",
     // logout: "auth/logout/",
     updateUser: "user",
+    eRepo:"user/thesis/list/",
     userProfile: "profile",
     form1ASubmit:'form1A/user/',
     form1BSubmit:'form1B/user/',
@@ -21,5 +22,6 @@ export const AppConstants = {
     form5Submit:'form5/user/',
     form6Submit: 'form6/user/',
     examinerProfile: 'examiner/list/'
+  
   },
 };

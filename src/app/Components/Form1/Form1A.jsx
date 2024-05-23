@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from "../../Services/userServices";
 import UploadForm from "../UploadForm/uploadForm";
+import { toast } from "react-toastify";
 
 const Form1A = ({userId}) => {
 
@@ -141,7 +142,7 @@ const Form1A = ({userId}) => {
         console.error(err);
       });
 
-    console.log("Submitting");
+      toast.success("Submitted Successfull");
   };
 
   return (

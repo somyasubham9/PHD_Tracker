@@ -40,7 +40,7 @@ const SocialProfile = () => {
       console.error('Failed to update:', error);
     }
   }
-  console.log(initialState);
+  console.log(userProfile);
   return (
     <div className="h-screen w-full">
       <div className="relative">
@@ -85,6 +85,45 @@ const SocialProfile = () => {
           )}
         </div>
       </div>
+      <div>
+      { (
+        <div className="px-6 py-4">
+          <h3 className="text-2xl md:text-2xl lg:text-3xl font-semibold text-gray-700">Examiners Details</h3>
+          {!userProfile?.data.comments_by_foreign && !userProfile?.data.comments_by_indian && <h3 className="py-4">No comments From Examiner</h3>}
+          {/* Indian Examiner Details */
+          userProfile?.data.comments_by_indian &&
+          <div className="mt-4 bg-white p-4 shadow-md rounded-lg">
+            <h4 className="text-xl font-semibold text-blue-700">Indian Examiner</h4>
+            <p>Name: {userProfile?.data.form4c.indian_examiner.name}</p>
+            <p>Designation: {userProfile?.data.form4c.indian_examiner.designation}</p>
+            <p>Institute: {userProfile?.data.form4c.indian_examiner.institute}</p>
+            <p>Email: {userProfile?.data.form4c.indian_examiner.email}</p>
+            <textarea
+              className="mt-2 p-2 w-full h-24 border border-gray-300 rounded-md"
+              placeholder="Enter comments for the Indian Examiner"
+                value={userProfile?.data.comments_by_indian}
+                disabled
+            />
+          </div>}
+          {/* Foreign Examiner Details */
+          userProfile?.data.comments_by_foreign &&
+          <div className="mt-4 bg-white p-4 shadow-md rounded-lg">
+            <h4 className="text-xl font-semibold text-blue-700">Foreign Examiner</h4>
+            <p>Name: {userProfile?.data.form4c.foreign_examiner.name}</p>
+            <p>Designation: {userProfile?.data.form4c.foreign_examiner.designation}</p>
+            <p>Institute: {userProfile?.data.form4c.foreign_examiner.institute}</p>
+            <p>Email: {userProfile?.data.form4c.foreign_examiner.email}</p>
+            <textarea
+              className="mt-2 p-2 w-full h-24 border border-gray-300 rounded-md"
+              placeholder="Enter comments for the Foreign Examiner"
+                value={userProfile?.data.comments_by_foreign}
+                disabled
+            />
+          </div>}
+        </div>
+      )}
+    </div>
+      
     </div>
   );
 };

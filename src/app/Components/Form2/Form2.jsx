@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useLazyGetUserProfileQuery } from "../../Services/userServices";
 import UploadForm from "../UploadForm/uploadForm";
+import { toast } from "react-toastify";
 
 const Form2 = ({ checkFormSubmission = true , userId}) => {
   const initialState = useSelector((state) => state.user);
@@ -136,6 +137,7 @@ const Form2 = ({ checkFormSubmission = true , userId}) => {
       console.error(error);
       // Handle error response
     }
+    toast.success("Submitted Successfull");
   };
 
   return formVisible ? (

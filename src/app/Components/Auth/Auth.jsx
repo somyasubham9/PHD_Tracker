@@ -157,10 +157,10 @@ const AuthPage = () => {
 
     await loginUser(jsonData).then((res) => {
       console.log(res);
+      toast.success('Login Successfull')
     });
 
     console.log("Handling Sign In");
-    toast.success('Login Successfull')
   };
 
   const handleSignup = async () => {
@@ -181,11 +181,11 @@ const AuthPage = () => {
     const jsonData = Object.fromEntries(formData.entries());
 
     await registerUser(jsonData).then((res) => {
+      toast.success("Registration Successfull");
       console.log(res);
     });
     // await updateUser()
     console.log("Handling signup");
-    toast.success("Registration Successfull");
     // Add your signup logic here
   };
 
@@ -255,19 +255,7 @@ const AuthPage = () => {
                   required
                 />
               </div>
-            </>
-          )}
-          <div className="mt-6">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full px-4 py-3 border rounded"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mt-6">
+              <div className="mt-6">
             <input
               type="text"
               placeholder="Enter your Roll Number"
@@ -287,7 +275,18 @@ const AuthPage = () => {
               required
             />
           </div>
-
+            </>
+          )}
+          <div className="mt-6">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="w-full px-4 py-3 border rounded"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
           <div className="mt-4">
             <input
               type="password"

@@ -15,6 +15,12 @@ export const AdminSidebarData = [
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
+  {
+    title: 'Register',
+    path: '/register',
+    icon: <IoIcons.IoIosPaper color='black' />,
+    cName: 'nav-text'
+  },
 
 
 ];

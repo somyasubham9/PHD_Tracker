@@ -1,10 +1,10 @@
 import React from "react";
-import SocialProfile from "../../Components/Profile/HeaderComponent";
+import StudentProfile from "../../Components/Profile/AdminProfile";
 
 const HomePage = () => {
   return (
     <>
-      <SocialProfile/>
+      <StudentProfile />
     </>
   );
 };

@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isLoggedIn: false,
   isAdmin: false,
+  userType:"",
   firstName: "",
   lastName: "",
   userEmail: "",
@@ -39,6 +40,9 @@ const user = createSlice({
     },
     updateIsAdmin: (state, { payload }) => {
       state.isAdmin = payload;
+    },
+    updateUserType: (state, { payload }) => {
+      state.userType = payload;
     },
     updateUserEmail: (state, { payload }) => {
       state.userEmail = payload;
@@ -123,6 +127,7 @@ const user = createSlice({
 export const {
   updateIsLoggedIn,
   updateIsAdmin,
+  updateUserType,
   updateFirstName,
   updateLastName,
   updateUserEmail,

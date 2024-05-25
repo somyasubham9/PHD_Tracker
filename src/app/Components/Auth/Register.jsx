@@ -43,13 +43,18 @@ const Register = () => {
     formData.append("password", password);
     formData.append("department", department);
     formData.append("roll_no", rollNo);
-    formData.append("supervisor", supervisor);
+    if (supervisor !== "") {
+      formData.append("supervisor", supervisor);
+    }
     formData.append("user_type", userType);
 
     const jsonData = Object.fromEntries(formData.entries());
 
     await registerUser(jsonData).then((res) => {
-      toast.success("Registration Successfull");
+      if(res.status)
+        toast.success("Registration Successfull");
+      else
+        toast.error('Registration Failed! Try Again');
       console.log(res);
     });
     // await updateUser()

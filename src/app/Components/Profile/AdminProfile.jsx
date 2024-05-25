@@ -243,35 +243,35 @@ const StudentProfile = () => {
       </div>
 
       <div className="px-4 pt-32 pb-6 bg-white shadow-xl rounded-lg mx-auto mt-6 lg:mt-4">
-        <h1 className="text-4xl font-bold text-center mb-4 text-blue-700">
+        {userProfile.data.first_name && userProfile.data.last_name && (<h1 className="text-4xl font-bold text-center mb-4 text-blue-700">
           {userProfile.data.first_name} {userProfile.data.last_name}
-        </h1>
+        </h1>)}
         <p className="text-center text-lg text-gray-600">
           {userProfile.data.email}
         </p>
-        <p className="text-center text-gray-600">
+        {userProfile.data.department && (<p className="text-center text-gray-600">
           {userProfile.data.department}
-        </p>
-        <p className="text-center text-gray-600">
+        </p>)}
+        {userProfile.data.supervisor &&(<p className="text-center text-gray-600">
           Guided by {userProfile.data.supervisor.first_name} {userProfile.data.supervisor.last_name}
-        </p>
-        <p className="text-center text-gray-800 font-medium mt-1">
+        </p>)}
+        {userProfile.data.status && (<p className="text-center text-gray-800 font-medium mt-1">
           Status : {userProfile.data.status}
-        </p>
+        </p>)}
         <p className="text-center text-gray-600">
           {userProfile.data.user_type === 'admin' ? `Administrator` : userProfile.data.user_type === 'co-admin' ? `Sub-Administrator` : userProfile.data.user_type === 'professor' ? `Guide` : `Scholar`}
         </p>
-        <div className="mt-6 px-6">
+        {userProfile.data.user_type === 'scholar' && (<div className="mt-6 px-6">
           <h3 className="text-2xl md:text-2xl lg:text-3xl font-semibold text-gray-700">
             Area of Research
           </h3>
           <p className="text-md md:text-lg lg:text-xl text-gray-800 mt-2 leading-relaxed">
             {userProfile.data.area_of_research || "No research area specified."}
           </p>
-        </div>
+        </div>)}
       </div>
-      <div className="p-5">
-        {(initialState.userType === 'admin' || initialState.userType === 'co-admin') && (
+      {userProfile.data.user_type === 'scholar' && (<div className="p-5">
+        {(initialState.userType === 'admin' || initialState.userType === 'co-admin' || !(['Newbie', 'Registration', 'Synopsis'].includes(userProfile.status))) && (
           <UploadForm
             formName="user"
             userId={userId}
@@ -279,9 +279,9 @@ const StudentProfile = () => {
             buttonId="thesis_upload"
           />
         )}
-      </div>
+      </div>)}
 
-      <div>
+      {userProfile.data.user_type === 'scholar' && (<div>
         {[
           "Thesis Submitted",
           "Comments Received By Indian Examiner",
@@ -392,9 +392,9 @@ const StudentProfile = () => {
             </div>)}
           </div>
         )}
-      </div>
+      </div>)}
 
-      <div className="px-4 py-6">
+      {userProfile.data.user_type === 'scholar' && (<div className="px-4 py-6">
         <h3 className="text-2xl font-semibold text-center mb-4">
           Submitted Forms
         </h3>
@@ -437,7 +437,7 @@ const StudentProfile = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div>)}
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

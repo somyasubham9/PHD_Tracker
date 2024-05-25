@@ -20,8 +20,8 @@ const ERepoCard = ({ user }) => {
       <div className="flex flex-col">
         <p className="name-client"> {user.name}</p>
         <p className="flex justify-center">{user.roll_no}</p>
-        <p className="">Supervisor : {user.supervisor}</p>
-        <p className="">Area Of Research : {user.area_of_research}</p>
+        <p className="text-gray-600">Guided by {user.supervisor}</p>
+        <p className="text-black font-medium mt-1">{user.title_of_thesis}</p>
       </div>
     </div>
   );

@@ -54,6 +54,23 @@ export const userServicesApi = createApi({
       },
     }),
 
+    dscCommitteeUpdate: builder.mutation({
+      query: ({ id, body }) => {
+        console.log(
+          `Making PATCH request to: ${AppConstants.endPoints.updateUser}/${id}`
+        );
+        return {
+          url: `${AppConstants.endPoints.updateUser}/${id}/update/`,
+          method: "PATCH",
+          body: body,
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+          },
+        };
+      },
+    }),
+
     examinerUpdate: builder.mutation({
       query: ({ id, body }) => {
         console.log(body, id);
@@ -168,6 +185,7 @@ export const {
   useUserUpdateMutation,
   useStatusUpdateMutation,
   useExaminerUpdateMutation,
+  useDscCommitteeUpdateMutation,
   useForeignUpdateMutation,
   useIndianUpdateMutation,
   useThesisUpdateMutation,

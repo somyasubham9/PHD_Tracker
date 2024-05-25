@@ -67,25 +67,31 @@ const UploadForm = (props) => {
                   Authorization: `Bearer ${token}`,
                 },
               }
-            );
+            ).then(async (res) => {
+              setDownloadUrl(uploadedUrl);
+              // alert("I am here")
+              if (formName === "form1B" && res.status === 200) {
+                // Update status to "Registered" if form submission is successful
+                await updateUser({ id: userId, status: "Registered" }).unwrap();
+                // alert("Reg")
+              } else if (formName === "form3C" && res.status === 200) {
+                // alert("Syn")
+                await updateUser({ id: userId, status: "Synopsis" }).unwrap();
+              } else if (formName === "form4E" && res.status === 200) {
+
+                await updateUser({
+                  id: userId,
+                  status: "Thesis Submitted",
+                }).unwrap();
+              } else if (formName === "form5" && res.status === 200) {
+                await updateUser({ id: userId, status: "Defence" }).unwrap();
+              } else if (formName === "form6" && res.status === 200) {
+                await updateUser({ id: userId, status: "Defence Closed" }).unwrap();
+              }
+            });
           }
           // console.log(res);
-          setDownloadUrl(uploadedUrl);
-          if (formName === "form1B" && res.status === 200) {
-            // Update status to "Registered" if form submission is successful
-            await updateUser({ id: userId, status: "Registered" }).unwrap();
-          } else if (formName === "form3C" && res.status === 200) {
-            await updateUser({ id: userId, status: "Synopsis" }).unwrap();
-          } else if (formName === "form4E" && res.status === 200) {
-            await updateUser({
-              id: userId,
-              status: "Thesis Submitted",
-            }).unwrap();
-          } else if (formName === "form5" && res.status === 200) {
-            await updateUser({ id: userId, status: "Defence" }).unwrap();
-          } else if (formName === "form6" && res.status === 200) {
-            await updateUser({ id: userId, status: "Defence Closed" }).unwrap();
-          }
+          
         }
       }
     };

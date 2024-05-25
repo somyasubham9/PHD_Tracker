@@ -6,6 +6,7 @@ import {
   useForeignUpdateMutation,
   useStatusUpdateMutation,
   useExaminerUpdateMutation,
+  useDscCommitteeUpdateMutation,
 } from "../../Services/userServices";
 import {
   AiFillCheckCircle,
@@ -32,6 +33,7 @@ import UploadForm from "../UploadForm/uploadForm";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
+import CustomDropdown from "../CustomDropdown/CustomDropdown";
 
 const StudentProfile = () => {
   const initialState = useSelector((state) => state.user);
@@ -43,7 +45,8 @@ const StudentProfile = () => {
     useLazyGetUserProfileQuery();
   const [selectedForm, setSelectedForm] = useState(null);
   const [updateUser] = useStatusUpdateMutation();
-  const [updateExaminer ] = useExaminerUpdateMutation();
+  const [updateExaminer] = useExaminerUpdateMutation();
+  const [updateDscCommittee] = useDscCommitteeUpdateMutation();
   const [IndianExaminerComments, setIndianExaminerComments] = useState(null);
   const [ForeignExaminerComments, setForeignExaminerComments] = useState(null);
   const [indianExaminerList, setIndianExaminerList] = useState([]);
@@ -61,14 +64,43 @@ const StudentProfile = () => {
     foreign: false,
   });
   const [initialCommentsLoaded, setInitialCommentsLoaded] = useState(false);
+  const [selectedDscCommittee, setSelectedDscCommittee] = useState([]);
+  const [dscCommitteeList, setDscCommitteeList] = useState([]);
+  const [isDscCommitteeSet, setIsDscCommitteeSet] = useState(false);
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   // Fetch user profile when component mounts or userId changes
   useEffect(() => {
     if (userId) {
-      getUserProfile(userId);
+      getUserProfile(userId)
+        .unwrap()
+        .then((res) => {
+          let dsc_committee = res.data.dsc_committee;
+          if (dsc_committee.length !== 0) {
+            let dsc_arr = [];
+            dsc_committee.forEach((val) => {
+              dsc_arr = [...dsc_arr, val.id];
+            })
+            setSelectedDscCommittee(dsc_arr);
+            setIsDscCommitteeSet(true);
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user profile:", error);
+        });
     }
   }, [userId, getUserProfile]);
+
+
+  useEffect(() => {
+    const fetchDSCCommitteeList = async () => {
+      const res = await axios.get("http://127.0.0.1:8000/api/professor/list/");
+      // console.log(res.data.data);
+      setDscCommitteeList(res.data.data);
+    };
+    fetchDSCCommitteeList();
+  }, []);
 
   const isFormSubmitted = (submissionDate) =>
     submissionDate !== null && submissionDate !== undefined;
@@ -171,10 +203,14 @@ const StudentProfile = () => {
         id: userId,
         status: "Comments Received By Indian Examiner",
       }).unwrap();
-      alert("Indian Examiner comments updated successfully!");
+      toast.success("Indian Examiner comments updated successfully!");
+      setCommentsFetched((prevState) => ({
+        ...prevState,  // Spread the previous state to keep the other values
+        indian: true // Update the value of indian
+      }));
     } catch (error) {
       // console.error("Failed to update Indian Examiner comments:", error);
-      alert("Error updating Indian Examiner comments.");
+      toast.error("Error updating Indian Examiner comments.");
     }
   };
 
@@ -188,10 +224,14 @@ const StudentProfile = () => {
         id: userId,
         status: "Comments Received By Foreign Examiner",
       }).unwrap();
-      alert("Foreign Examiner comments updated successfully!");
+      toast.success("Foreign Examiner comments updated successfully!");
+      setCommentsFetched((prevState) => ({
+        ...prevState,  // Spread the previous state to keep the other values
+        foreign: true  // Update the value of indian
+      }));
     } catch (error) {
       console.error("Failed to update Foreign Examiner comments:", error);
-      alert("Error updating Foreign Examiner comments.");
+      toast.error("Error updating Foreign Examiner comments.");
     }
   };
 
@@ -225,6 +265,33 @@ const StudentProfile = () => {
       console.error("Failed to assign Foreign Examiner:", error);
       toast.error("Error assigning Foreign Examiner.");
     }
+  };
+
+  const handleDscCommitteeChange = (e) => {
+    // console.log(e);
+    // const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+    setSelectedDscCommittee(e);
+  };
+
+  const submitDscCommittee = async () => {
+    // Handle submission logic here, e.g., update user profile with selected committee
+    // This function is called when the user clicks on the submit button
+    console.log("Selected DSC Committee:", selectedDscCommittee);
+    let dsc_committee = [];
+    selectedDscCommittee.forEach((value) => {
+      dsc_committee = [...dsc_committee, value];
+    }
+    );
+    await updateDscCommittee({
+      id: userId,
+      body: {
+        dsc_committee: dsc_committee,
+      }
+    }).unwrap();
+    setIsDscCommitteeSet(true);
+    toast.success("Dsc committee list submitted successfully")
+
+    // Update the UI to reflect the selected committee
   };
 
   return (
@@ -261,6 +328,23 @@ const StudentProfile = () => {
         <p className="text-center text-gray-600">
           {userProfile.data.user_type === 'admin' ? `Administrator` : userProfile.data.user_type === 'co-admin' ? `Sub-Administrator` : userProfile.data.user_type === 'professor' ? `Guide` : `Scholar`}
         </p>
+        <div className="px-4 py-6">
+          <h3 className="text-2xl font-semibold text-center mb-4">DSC Committee</h3>
+          <div className="bg-white p-4 shadow-md rounded-lg">
+            {userProfile.data.user_type === 'scholar' && (<CustomDropdown
+              options={dscCommitteeList}
+              selectedValues={selectedDscCommittee}
+              onChange={handleDscCommitteeChange}
+              isSet={isDscCommitteeSet || (initialState.userType === 'professor' || initialState.userType === 'scholar')}
+            />)}
+            { !isDscCommitteeSet && userProfile.data.user_type === 'scholar' && (initialState.userType === 'admin' || initialState.userType === 'co-admin') && (<button
+              className="mt-2 p-2 bg-blue-600 text-white rounded-md"
+              onClick={submitDscCommittee}
+            >
+              Submit DSC Committee
+            </button>)}
+          </div>
+        </div>
         {userProfile.data.user_type === 'scholar' && (<div className="mt-6 px-6">
           <h3 className="text-2xl md:text-2xl lg:text-3xl font-semibold text-gray-700">
             Area of Research
@@ -270,8 +354,8 @@ const StudentProfile = () => {
           </p>
         </div>)}
       </div>
-      {userProfile.data.user_type === 'scholar' && (<div className="p-5">
-        {(initialState.userType === 'admin' || initialState.userType === 'co-admin' || !(['Newbie', 'Registration', 'Synopsis'].includes(userProfile.status))) && (
+      {userProfile.data.user_type === 'scholar' && (userProfile.data.status !== 'Newbie' && userProfile.data.status !== 'Registration' && userProfile.data.status !== 'Synopsis') && (<div className="p-5">
+        {(initialState.userType === 'admin' || initialState.userType === 'co-admin') && (
           <UploadForm
             formName="user"
             userId={userId}
@@ -396,7 +480,7 @@ const StudentProfile = () => {
 
       {userProfile.data.user_type === 'scholar' && (<div className="px-4 py-6">
         <h3 className="text-2xl font-semibold text-center mb-4">
-          Submitted Forms
+          Scholar Forms
         </h3>
         <div className="grid grid-cols-4 gap-6">
           {[

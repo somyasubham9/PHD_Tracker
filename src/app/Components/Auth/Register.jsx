@@ -42,7 +42,9 @@ const Register = () => {
     formData.append("email", email);
     formData.append("password", password);
     formData.append("department", department);
-    formData.append("roll_no", rollNo);
+    if (rollNo !== ""){
+      formData.append("roll_no", rollNo);
+    }
     if (supervisor !== "") {
       formData.append("supervisor", supervisor);
     }
@@ -50,16 +52,19 @@ const Register = () => {
 
     const jsonData = Object.fromEntries(formData.entries());
 
-    await registerUser(jsonData).then((res) => {
-      if(res.status)
-        toast.success("Registration Successfull");
-      else
-        toast.error('Registration Failed! Try Again');
-      console.log(res);
-    });
-    // await updateUser()
-    console.log("Handling signup");
-    // Add your signup logic here
+    try {
+      const response = await registerUser(jsonData);
+      const responseData = response.data; // Assuming response is already JSON parsed
+
+      if (responseData["status code"] === 200) {
+        toast.success(responseData.message || "Registration Successful");
+      } else {
+        toast.error(responseData.message || "Registration Failed! Try Again");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      toast.error("Error submitting form. Please try again later.");
+    }
   };
 
   return (
@@ -100,6 +105,18 @@ const Register = () => {
               />
             </div>
             <div className="mt-6">
+              <select
+                className="w-full px-4 py-3 border rounded"
+                value={userType}
+                onChange={(e) => setUserType(e.target.value)}
+                required
+              >
+                <option value="">Select User Type</option>
+                <option value="professor">Professor</option>
+                <option value="scholar">Scholar</option>
+              </select>
+            </div>
+            <div className="mt-6">
               <input
                 type="text"
                 placeholder="Enter your Department"
@@ -116,22 +133,11 @@ const Register = () => {
                 className="w-full px-4 py-3 border rounded"
                 value={rollNo}
                 onChange={(e) => setRollNo(e.target.value)}
+                disabled={userType === "professor"}
                 required
               />
             </div>
 
-            <div className="mt-6">
-              <select
-                className="w-full px-4 py-3 border rounded"
-                value={userType}
-                onChange={(e) => setUserType(e.target.value)}
-                required
-              >
-                <option value="">Select User Type</option>
-                <option value="professor">Professor</option>
-                <option value="scholar">Scholar</option>
-              </select>
-            </div>
             <div className="mt-6">
               <select
                 className="w-full px-4 py-3 border rounded"

@@ -5,6 +5,7 @@ import {
   useIndianUpdateMutation,
   useForeignUpdateMutation,
   useStatusUpdateMutation,
+  useExaminerUpdateMutation,
 } from "../../Services/userServices";
 import {
   AiFillCheckCircle,
@@ -29,6 +30,8 @@ import Form6 from "../Form6/Form6";
 import Form5 from "../Form5/Form5";
 import UploadForm from "../UploadForm/uploadForm";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const StudentProfile = () => {
   const initialState = useSelector((state) => state.user);
@@ -40,10 +43,19 @@ const StudentProfile = () => {
     useLazyGetUserProfileQuery();
   const [selectedForm, setSelectedForm] = useState(null);
   const [updateUser] = useStatusUpdateMutation();
+  const [updateExaminer ] = useExaminerUpdateMutation();
   const [IndianExaminerComments, setIndianExaminerComments] = useState(null);
   const [ForeignExaminerComments, setForeignExaminerComments] = useState(null);
+  const [indianExaminerList, setIndianExaminerList] = useState([]);
+  const [foreignExaminerList, setForeignExaminerList] = useState([]);
+  const [selectedIndianExaminer, setSelectedIndianExaminer] = useState("");
+  const [selectedForeignExaminer, setSelectedForeignExaminer] = useState("");
   const [updateIndianExaminer] = useIndianUpdateMutation();
   const [updateForeignExaminer] = useForeignUpdateMutation();
+  const [studentIndianExaminer, setStudentIndianExaminer] = useState()
+  const [studentForeignExaminer, setStudentForeignExaminer] = useState()
+  const [isIndianExaminer, setIsIndianExaminer] = useState(false);
+  const [isForeignExaminer, setIsForeignExaminer] = useState(false);
   const [commentsFetched, setCommentsFetched] = useState({
     indian: false,
     foreign: false,
@@ -75,8 +87,38 @@ const StudentProfile = () => {
           });
         }
       });
+      getUserProfile(userId).then((response) => {
+        if (response?.data) {
+          if (response.data.data.indian_examiner) {
+            setStudentIndianExaminer(response.data.data.indian_examiner)
+            setIsIndianExaminer(true);
+          }
+          if (response.data.data.foreign_examiner) {
+            setStudentForeignExaminer(response.data.data.foreign_examiner)
+            setIsForeignExaminer(true);
+          }
+
+        }
+      })
     }
-  }, [userId, getUserProfile]);
+    const getExaminerList = async () => {
+      const token = sessionStorage.getItem("access");
+      if (!token) {
+        console.error("No access token found in session storage");
+        return;
+      }
+      const res = await axios.get("http://127.0.0.1:8000/api/examiner/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setIndianExaminerList(res.data.data.indian);
+      setForeignExaminerList(res.data.data.foreign);
+    }
+    getExaminerList();
+  }, [userId, getUserProfile, isIndianExaminer, isForeignExaminer]);
 
   const renderFormComponent = () => {
     switch (selectedForm) {
@@ -112,8 +154,8 @@ const StudentProfile = () => {
   };
 
   if (isLoading) return <div>Loading...</div>;
-  console.log(isError);
-  console.log(userProfile);
+  // console.log(isError);
+  // console.log(userProfile);
 
   if (isError || !userProfile)
     return <div>Error fetching the user profile or user not found.</div>;
@@ -131,7 +173,7 @@ const StudentProfile = () => {
       }).unwrap();
       alert("Indian Examiner comments updated successfully!");
     } catch (error) {
-      console.error("Failed to update Indian Examiner comments:", error);
+      // console.error("Failed to update Indian Examiner comments:", error);
       alert("Error updating Indian Examiner comments.");
     }
   };
@@ -150,6 +192,38 @@ const StudentProfile = () => {
     } catch (error) {
       console.error("Failed to update Foreign Examiner comments:", error);
       alert("Error updating Foreign Examiner comments.");
+    }
+  };
+
+  const assignIndianExaminer = async () => {
+    try {
+      await updateExaminer({
+        id: userId,
+        body: {
+          indian_examiner_id: selectedIndianExaminer,
+        }
+      }).unwrap();
+      toast.success("Indian Examiner assigned successfully!");
+      setIsIndianExaminer(true);
+    } catch (error) {
+      console.error("Failed to assign Indian Examiner:", error);
+      toast.error("Error assigning Indian Examiner.");
+    }
+  };
+
+  const assignForeignExaminer = async () => {
+    try {
+      await updateExaminer({
+        id: userId,
+        body: {
+          foreign_examiner_id: selectedForeignExaminer,
+        }
+      }).unwrap();
+      toast.success("Foreign Examiner assigned successfully!");
+      setIsForeignExaminer(true);
+    } catch (error) {
+      console.error("Failed to assign Foreign Examiner:", error);
+      toast.error("Error assigning Foreign Examiner.");
     }
   };
 
@@ -175,11 +249,17 @@ const StudentProfile = () => {
         <p className="text-center text-lg text-gray-600">
           {userProfile.data.email}
         </p>
-        <p className="text-center text-gray-800 font-medium mt-1">
-          Department : {userProfile.data.department}
+        <p className="text-center text-gray-600">
+          {userProfile.data.department}
+        </p>
+        <p className="text-center text-gray-600">
+          Guided by {userProfile.data.supervisor.first_name} {userProfile.data.supervisor.last_name}
         </p>
         <p className="text-center text-gray-800 font-medium mt-1">
           Status : {userProfile.data.status}
+        </p>
+        <p className="text-center text-gray-600">
+          {userProfile.data.user_type === 'admin' ? `Administrator` : userProfile.data.user_type === 'co-admin' ? `Sub-Administrator` : userProfile.data.user_type === 'professor' ? `Guide` : `Scholar`}
         </p>
         <div className="mt-6 px-6">
           <h3 className="text-2xl md:text-2xl lg:text-3xl font-semibold text-gray-700">
@@ -190,8 +270,8 @@ const StudentProfile = () => {
           </p>
         </div>
       </div>
-      <div className="p-20">
-        {initialState.isAdmin && (
+      <div className="p-5">
+        {(initialState.userType === 'admin' || initialState.userType === 'co-admin') && (
           <UploadForm
             formName="user"
             userId={userId}
@@ -214,28 +294,38 @@ const StudentProfile = () => {
               Examiners Details
             </h3>
             {/* Indian Examiner Dropdown */}
-            <div className="mt-4 bg-white p-4 shadow-md rounded-lg">
+            {isIndianExaminer === false && (<div className="mt-4 bg-white p-4 shadow-md rounded-lg">
               <h4 className="text-xl font-semibold text-blue-700">
                 Indian Examiner
               </h4>
               <select
                 className="mt-2 p-2 w-full border border-gray-300 rounded-md"
-                value=""
-                // onChange={(e) => setIndianExaminer(e.target.value)}
+                value={selectedIndianExaminer}
+                onChange={(e) => setSelectedIndianExaminer(e.target.value)}
               >
                 <option value="">Select Indian Examiner</option>
-                {/* Populate options dynamically */}
+                {indianExaminerList.map((examiner) => (
+                  <option key={examiner.id} value={examiner.id}>
+                    {examiner.name}
+                  </option>
+                ))}
               </select>
-            </div>
+              <button
+                onClick={assignIndianExaminer}
+                className="mt-2 p-2 bg-blue-600 text-white rounded-md"
+              >
+                Assign Indian Examiner
+              </button>
+            </div>)}
             {/* Indian Examiner Details */}
-            <div className="mt-4 bg-white p-4 shadow-md rounded-lg">
+            {isIndianExaminer && (<div className="mt-4 bg-white p-4 shadow-md rounded-lg">
               <h4 className="text-xl font-semibold text-blue-700">
                 Indian Examiner Details
               </h4>
-              {/* <p>Name: {userData.form4c.indian_examiner.name}</p>
-              <p>Designation: {userData.form4c.indian_examiner.designation}</p>
-              <p>Institute: {userData.form4c.indian_examiner.institute}</p>
-              <p>Email: {userData.form4c.indian_examiner.email}</p> */}
+              <p>Name: {studentIndianExaminer?.name}</p>
+              <p>Designation: {studentIndianExaminer?.designation}</p>
+              <p>Institute: {studentIndianExaminer?.institute}</p>
+              <p>Email: {studentIndianExaminer?.email}</p>
               <textarea
                 className="mt-2 p-2 w-full h-24 border border-gray-300 rounded-md"
                 placeholder="Enter comments for the Indian Examiner"
@@ -250,31 +340,41 @@ const StudentProfile = () => {
                   title="Submit Indian Examiner Comments"
                 />
               )}
-            </div>
+            </div>)}
 
             {/* Foreign Examiner Dropdown */}
-            <div className="mt-4 bg-white p-4 shadow-md rounded-lg">
+            {isForeignExaminer === false && (<div className="mt-4 bg-white p-4 shadow-md rounded-lg">
               <h4 className="text-xl font-semibold text-blue-700">
                 Foreign Examiner
               </h4>
               <select
                 className="mt-2 p-2 w-full border border-gray-300 rounded-md"
-                value=""
-                // onChange={(e) => setForeignExaminer(e.target.value)}
+                value={selectedForeignExaminer}
+                onChange={(e) => setSelectedForeignExaminer(e.target.value)}
               >
                 <option value="">Select Foreign Examiner</option>
-                {/* Populate options dynamically */}
+                {foreignExaminerList.map((examiner) => (
+                  <option key={examiner.id} value={examiner.id}>
+                    {examiner.name}
+                  </option>
+                ))}
               </select>
-            </div>
+              <button
+                onClick={assignForeignExaminer}
+                className="mt-2 p-2 bg-blue-600 text-white rounded-md"
+              >
+                Assign Foreign Examiner
+              </button>
+            </div>)}
             {/* Foreign Examiner Details */}
-            <div className="mt-4 bg-white p-4 shadow-md rounded-lg">
+            {isForeignExaminer && (<div className="mt-4 bg-white p-4 shadow-md rounded-lg">
               <h4 className="text-xl font-semibold text-blue-700">
                 Foreign Examiner Details
               </h4>
-              {/* <p>Name: {userData.form4c.foreign_examiner.name}</p>
-              <p>Designation: {userData.form4c.foreign_examiner.designation}</p>
-              <p>Institute: {userData.form4c.foreign_examiner.institute}</p>
-              <p>Email: {userData.form4c.foreign_examiner.email}</p> */}
+              <p>Name: {studentForeignExaminer?.name}</p>
+              <p>Designation: {studentForeignExaminer?.designation}</p>
+              <p>Institute: {studentForeignExaminer?.institute}</p>
+              <p>Email: {studentForeignExaminer?.email}</p>
               <textarea
                 className="mt-2 p-2 w-full h-24 border border-gray-300 rounded-md"
                 placeholder="Enter comments for the Foreign Examiner"
@@ -289,7 +389,7 @@ const StudentProfile = () => {
                   title="Submit Foreign Examiner Comments"
                 />
               )}
-            </div>
+            </div>)}
           </div>
         )}
       </div>

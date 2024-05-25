@@ -14,6 +14,8 @@ const UploadForm = (props) => {
   const [uploadedUrl, setUploadedUrl] = useState("");
   const [downloadUrl, setDownloadUrl] = useState("");
   const [fileName, setFileName] = useState("");
+  const [customFileName, setCustomFileName] = useState(); // State for custom file name
+  const [savedFileName, setSavedFileName] = useState(); // State for saved file name
 
   const [updateUser] = useStatusUpdateMutation();
 
@@ -35,18 +37,38 @@ const UploadForm = (props) => {
         }
         let url = "";
         if (uploadedUrl !== "") {
-          if (formName == "user")
+          if (formName == "user") {
             url = `http://127.0.0.1:8000/api/${formName}/${userId}/update/`;
-          else url = `http://127.0.0.1:8000/api/${formName}/user/${userId}/`;
-          const res = await axios.post(
-            url,
-            { [fieldName]: uploadedUrl },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+            const res = await axios.patch(
+              url,
+              { [fieldName]: uploadedUrl, title_of_thesis: customFileName },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            if (res.status === 200) {
+              toast.success("Thesis and Thesis Title uploaded successfully to database");
+              setSavedFileName(customFileName);
             }
-          );
+            else
+            {
+              toast.error("Thesis and Thesis Title failed to upload to database");
+              }
+          }
+          else {
+            url = `http://127.0.0.1:8000/api/${formName}/user/${userId}/`;
+            const res = await axios.post(
+              url,
+              { [fieldName]: uploadedUrl },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+          }
           // console.log(res);
           setDownloadUrl(uploadedUrl);
           if (formName === "form1B" && res.status === 200) {
@@ -88,7 +110,7 @@ const UploadForm = (props) => {
         },
       });
       let fetched_url;
-      console.log(res.data.data);
+      // console.log(res.data.data);
       if (fieldName === "softcopy_url")
         fetched_url = await res.data.data.softcopy_url;
       else fetched_url = await res.data.data.thesis_url;
@@ -97,15 +119,22 @@ const UploadForm = (props) => {
       } else {
         setDownloadUrl(fetched_url);
       }
+      if (formName === 'user' && res.data.data.title_of_thesis) {
+        setSavedFileName(res.data.data.title_of_thesis)
+      }
     };
 
     getDownloadURL();
-    console.log(initialState.isAdmin);
+    // console.log(initialState.isAdmin);
   }, []);
 
   const handleUpload = async () => {
     if (!pdf) {
       alert("Please select a PDF to upload.");
+      return;
+    }
+    if (formName === 'user' && !customFileName) {
+      toast.error("Please enter title of the thesis");
       return;
     }
 
@@ -147,13 +176,13 @@ const UploadForm = (props) => {
   };
 
   return (
-    <div className="container">
+    <div className="">
       {allowUpload && (
         <h2 className="title">
-          {fieldName === "thesis_url" ? `Upload Thesis` : `Upload Form`}
+          {!downloadUrl ? `Upload` : `Download`} {fieldName === "thesis_url" ? `Thesis` : `Form`}
         </h2>
       )}
-      {allowUpload && (
+      {allowUpload && !downloadUrl && (
         <div className="file-input">
           <label htmlFor={buttonId} className="choose-file-label">
             Choose File
@@ -167,7 +196,21 @@ const UploadForm = (props) => {
           {/* Show the file name */}
         </div>
       )}
-      {allowUpload && (
+      {allowUpload && pdf && !downloadUrl && formName === 'user' && (
+        <div className="file-input">
+          <label htmlFor="custom-file-name" className="w-full ml-5 px-4 py-3 text-gray-800 font-medium">
+          Thesis Title
+          </label>
+          <input
+            type="text"
+            id="custom-file-name"
+            className="w-full px-4 py-3 border rounded ml-2"
+            value={customFileName}
+            onChange={(e) => setCustomFileName(e.target.value)}
+          />
+        </div>
+      )}
+      {allowUpload && !downloadUrl && (
         <button
           onClick={handleUpload}
           disabled={uploading}
@@ -175,6 +218,11 @@ const UploadForm = (props) => {
         >
           {uploading ? "Uploading..." : "Upload PDF"}
         </button>
+      )}
+      {formName === 'user' && savedFileName && (
+        <p className="text-gray-800 font-medium mt-1">
+          Thesis Title : {savedFileName}
+        </p>
       )}
       {downloadUrl ? (
         <div>

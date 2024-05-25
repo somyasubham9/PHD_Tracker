@@ -54,6 +54,24 @@ export const userServicesApi = createApi({
       },
     }),
 
+    examinerUpdate: builder.mutation({
+      query: ({ id, body }) => {
+        console.log(body, id);
+        console.log(
+          `Making PATCH request to: ${AppConstants.endPoints.updateUser}/${id}`
+        );
+        return {
+          url: `${AppConstants.endPoints.updateUser}/${id}/update/`,
+          method: "PATCH",
+          body: body,
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            Authorization: `Bearer ${sessionStorage.getItem("access")}`,
+          },
+        };
+      },
+    }),
+
     indianUpdate: builder.mutation({
       query: ({ id, comments_by_indian }) => {
         console.log(comments_by_indian, id);
@@ -149,6 +167,7 @@ export const {
   useUserLoginMutation,
   useUserUpdateMutation,
   useStatusUpdateMutation,
+  useExaminerUpdateMutation,
   useForeignUpdateMutation,
   useIndianUpdateMutation,
   useThesisUpdateMutation,

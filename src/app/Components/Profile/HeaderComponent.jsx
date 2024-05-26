@@ -11,7 +11,7 @@ const SocialProfile = () => {
   const [researchArea, setResearchArea] = useState('');
 
   const [getUserProfile, { data: userProfile, isSuccess }] = useLazyGetUserProfileQuery();
-  const [updateUser] = useUserUpdateMutation();
+  const [updateResearchUser] = useUserUpdateMutation();
 
   useEffect(() => {
     if (initialState.userId) {
@@ -28,7 +28,7 @@ const SocialProfile = () => {
 
   const handleSave = async () => {
     try {
-      const result = await updateUser({ id: initialState.userId, area_of_research: researchArea });
+      const result = await updateResearchUser({ id: initialState.userId, area_of_research: researchArea });
       if (result.error) {
         console.log('Error updating user:', result.error);
       } else {

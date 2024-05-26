@@ -144,7 +144,10 @@ const AuthPage = () => {
 
     await loginUser(jsonData).then((res) => {
       console.log(res);
-      toast.success("Login Successfull");
+      if (res?.error?.status === 400)
+        toast.error("Invalid Credentials");
+      else
+        toast.success("Login Successfull");
     });
 
     console.log("Handling Sign In");

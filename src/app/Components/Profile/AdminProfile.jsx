@@ -7,9 +7,11 @@ import {
   useStatusUpdateMutation,
   useExaminerUpdateMutation,
   useDscCommitteeUpdateMutation,
+  useUserUpdateMutation,
 } from "../../Services/userServices";
 import {
   AiFillCheckCircle,
+  AiFillEdit,
   AiFillEye,
   AiOutlineCheckCircle,
   AiOutlineClose,
@@ -30,10 +32,11 @@ import Form4E from "../Form4/Form4E";
 import Form6 from "../Form6/Form6";
 import Form5 from "../Form5/Form5";
 import UploadForm from "../UploadForm/uploadForm";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CustomDropdown from "../CustomDropdown/CustomDropdown";
+import { updateAreaOfResearch } from "../../Redux/slices/userSlice";
 
 const StudentProfile = () => {
   const initialState = useSelector((state) => state.user);
@@ -47,6 +50,7 @@ const StudentProfile = () => {
   const [updateUser] = useStatusUpdateMutation();
   const [updateExaminer] = useExaminerUpdateMutation();
   const [updateDscCommittee] = useDscCommitteeUpdateMutation();
+  const [updateResearchUser] = useUserUpdateMutation();
   const [IndianExaminerComments, setIndianExaminerComments] = useState(null);
   const [ForeignExaminerComments, setForeignExaminerComments] = useState(null);
   const [indianExaminerList, setIndianExaminerList] = useState([]);
@@ -67,10 +71,27 @@ const StudentProfile = () => {
   const [selectedDscCommittee, setSelectedDscCommittee] = useState([]);
   const [dscCommitteeList, setDscCommitteeList] = useState([]);
   const [isDscCommitteeSet, setIsDscCommitteeSet] = useState(false);
+  const dispatch = useDispatch();
+  const [editMode, setEditMode] = useState(false);
+  const [researchArea, setResearchArea] = useState('');
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   // Fetch user profile when component mounts or userId changes
+
+  useEffect(() => {
+    if (initialState.userId) {
+      getUserProfile(initialState.userId);
+    }
+  }, [initialState.userId, getUserProfile]);
+
+  useEffect(() => {
+    if (!isLoading && userProfile) {
+      setResearchArea(userProfile.data.area_of_research || '');
+      dispatch(updateAreaOfResearch(userProfile.area_of_research));
+    }
+  }, [userProfile, isLoading, dispatch])
+  
   useEffect(() => {
     if (userId) {
       getUserProfile(userId)
@@ -90,7 +111,10 @@ const StudentProfile = () => {
           console.error("Failed to fetch user profile:", error);
         });
     }
+    
   }, [userId, getUserProfile]);
+
+
 
 
   useEffect(() => {
@@ -235,7 +259,7 @@ const StudentProfile = () => {
     }
   };
 
-  const assignIndianExaminer = async () => {
+  const assignIndianExaminer = async (e) => {
     try {
       await updateExaminer({
         id: userId,
@@ -245,13 +269,14 @@ const StudentProfile = () => {
       }).unwrap();
       toast.success("Indian Examiner assigned successfully!");
       setIsIndianExaminer(true);
+      await updateUser({ id: userId, status: "Indian Examiner Assigned" }).unwrap();
     } catch (error) {
       console.error("Failed to assign Indian Examiner:", error);
       toast.error("Error assigning Indian Examiner.");
     }
   };
 
-  const assignForeignExaminer = async () => {
+  const assignForeignExaminer = async (e) => {
     try {
       await updateExaminer({
         id: userId,
@@ -261,6 +286,7 @@ const StudentProfile = () => {
       }).unwrap();
       toast.success("Foreign Examiner assigned successfully!");
       setIsForeignExaminer(true);
+      await updateUser({ id: userId, status: "Foreign Examiner Assigned" }).unwrap();
     } catch (error) {
       console.error("Failed to assign Foreign Examiner:", error);
       toast.error("Error assigning Foreign Examiner.");
@@ -293,6 +319,28 @@ const StudentProfile = () => {
 
     // Update the UI to reflect the selected committee
   };
+
+  // useEffect(() => {
+  //   if (initialState.userId) {
+  //     getUserProfile(initialState.userId);
+  //   }
+  // }, [initialState.userId, getUserProfile]);
+
+
+  const handleSave = async () => {
+    try {
+      const result = await updateResearchUser({ id: initialState.userId, area_of_research: researchArea });
+      if (result.error) {
+        console.log('Error updating user:', result.error);
+      } else {
+        dispatch(updateAreaOfResearch(researchArea));
+        setEditMode(false);
+        toast.success('Updated successfully!');
+      }
+    } catch (error) {
+      toast.error('Failed to update:', error);
+    }
+  }
 
   return (
     <div className="h-screen w-full">
@@ -328,15 +376,15 @@ const StudentProfile = () => {
         <p className="text-center text-gray-600">
           {userProfile.data.user_type === 'admin' ? `Administrator` : userProfile.data.user_type === 'co-admin' ? `Sub-Administrator` : userProfile.data.user_type === 'professor' ? `Guide` : `Scholar`}
         </p>
-        <div className="px-4 py-6">
+        {userProfile.data.user_type === 'scholar' && (<div className="px-4 py-6">
           <h3 className="text-2xl font-semibold text-center mb-4">DSC Committee</h3>
           <div className="bg-white p-4 shadow-md rounded-lg">
-            {userProfile.data.user_type === 'scholar' && (<CustomDropdown
+            <CustomDropdown
               options={dscCommitteeList}
               selectedValues={selectedDscCommittee}
               onChange={handleDscCommitteeChange}
               isSet={isDscCommitteeSet || (initialState.userType === 'professor' || initialState.userType === 'scholar')}
-            />)}
+            />
             { !isDscCommitteeSet && userProfile.data.user_type === 'scholar' && (initialState.userType === 'admin' || initialState.userType === 'co-admin') && (<button
               className="mt-2 p-2 bg-blue-600 text-white rounded-md"
               onClick={submitDscCommittee}
@@ -344,17 +392,31 @@ const StudentProfile = () => {
               Submit DSC Committee
             </button>)}
           </div>
-        </div>
+        </div>)}
         {userProfile.data.user_type === 'scholar' && (<div className="mt-6 px-6">
           <h3 className="text-2xl md:text-2xl lg:text-3xl font-semibold text-gray-700">
-            Area of Research
+            Areas Of Research
+            {!editMode && initialState.userType === 'scholar' && (
+              <AiFillEdit className="inline ml-2 cursor-pointer p-1 bg-blue-300 rounded-full" onClick={() => setEditMode(true)} />
+            )}
           </h3>
-          <p className="text-md md:text-lg lg:text-xl text-gray-800 mt-2 leading-relaxed">
-            {userProfile.data.area_of_research || "No research area specified."}
-          </p>
+          {editMode && initialState.userType === 'scholar' ? (
+            <textarea
+              className="text-md md:text-lg lg:text-xl text-gray-800 mt-2 leading-relaxed border border-gray-300 rounded p-2 w-full"
+              value={researchArea}
+              onChange={(e) => setResearchArea(e.target.value)}
+            />
+          ) : (
+            <p className="text-md md:text-lg lg:text-xl text-gray-800 mt-2 leading-relaxed">
+              {researchArea || "No research area specified. Click edit to add your research interests."}
+            </p>
+          )}
+          {editMode && (
+            <button onClick={handleSave} className="px-4 py-2 bg-blue-500 text-white rounded mt-2">Save</button>
+          )}
         </div>)}
       </div>
-      {userProfile.data.user_type === 'scholar' && (userProfile.data.status !== 'Newbie' && userProfile.data.status !== 'Registration' && userProfile.data.status !== 'Synopsis') && (<div className="p-5">
+      {userProfile.data.user_type === 'scholar' && (userProfile.data.status !== 'Newbie' && userProfile.data.status !== 'Registered' && userProfile.data.status !== 'Synopsis') && (<div className="px-6 py-4">
         {(initialState.userType === 'admin' || initialState.userType === 'co-admin') && (
           <UploadForm
             formName="user"
@@ -368,11 +430,13 @@ const StudentProfile = () => {
       {userProfile.data.user_type === 'scholar' && (<div>
         {[
           "Thesis Submitted",
+          "Indian Examiner Assigned",
+          "Foreign Examiner Assigned",
           "Comments Received By Indian Examiner",
           "Comments Received By Foreign Examiner",
           "Defence",
           "Defence Closed",
-        ].includes(userData.status) && (
+        ].includes(userProfile.data.status) && (
           <div className="px-6 py-4">
             <h3 className="text-2xl md:text-2xl lg:text-3xl font-semibold text-gray-700">
               Examiners Details

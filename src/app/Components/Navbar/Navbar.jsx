@@ -110,6 +110,10 @@ function Navbar() {
               })}
             {isAdmin &&
               AdminSidebarData.map((item, index) => {
+                if (index === 2 && initialState.userType === 'professor')
+                {
+                  return;
+                }
                 return (
                   <li key={index} className={item.cName}>
                     <Link to={item.path}>

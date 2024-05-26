@@ -51,6 +51,7 @@ const UploadForm = (props) => {
             if (res.status === 200) {
               toast.success("Thesis and Thesis Title uploaded successfully to database");
               setSavedFileName(customFileName);
+              setDownloadUrl(uploadedUrl);
             }
             else
             {
@@ -189,31 +190,33 @@ const UploadForm = (props) => {
         </h2>
       )}
       {allowUpload && !downloadUrl && (
-        <div className="file-input">
-          <label htmlFor={buttonId} className="choose-file-label">
-            Choose File
-          </label>
-          <input
-            type="file"
-            id={buttonId} // Add an id to the input
-            onChange={handlePdfChange}
-          />
-          {fileName && <span className="file-name">{fileName}</span>}{" "}
-          {/* Show the file name */}
-        </div>
-      )}
-      {allowUpload && pdf && !downloadUrl && formName === 'user' && (
-        <div className="file-input">
-          <label htmlFor="custom-file-name" className="w-full ml-5 px-4 py-3 text-gray-800 font-medium">
-          Thesis Title
-          </label>
-          <input
-            type="text"
-            id="custom-file-name"
-            className="w-full px-4 py-3 border rounded ml-2"
-            value={customFileName}
-            onChange={(e) => setCustomFileName(e.target.value)}
-          />
+        <div className="file-input flex items-center w-full mt-2">
+          <div className="mr-2">
+            <label htmlFor={buttonId} className="choose-file-label">
+              Choose File
+            </label>
+            <input
+              type="file"
+              id={buttonId} // Add an id to the input
+              onChange={handlePdfChange}
+              className="hidden"
+            />
+            {fileName && <span className="file-name">{fileName}</span>}
+          </div>
+          {pdf && formName === 'user' && (
+            <div className="flex-grow">
+              <label htmlFor="custom-file-name" className="text-gray-800 font-medium">
+                Thesis Title:
+              </label>
+              <input
+                type="text"
+                id="custom-file-name"
+                className="w-full px-4 py-2 border rounded ml-2"
+                value={customFileName}
+                onChange={(e) => setCustomFileName(e.target.value)}
+              />
+            </div>
+          )}
         </div>
       )}
       {allowUpload && !downloadUrl && (

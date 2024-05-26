@@ -26,7 +26,7 @@ const CustomDropdown = ({ options, selectedValues, onChange, isSet }) => {
     return (
         <div className="relative">
             <div
-                className={`w-full h-10 border border-gray-300 rounded-md px-4 flex items-center justify-between ${isSet ? 'cursor-not-allowed bg-gray-100' : 'cursor-pointer'}`}
+                className={`w-full h-10 border border-gray-300 rounded-md px-4 py-6 flex items-center justify-between ${isSet ? 'cursor-not-allowed bg-gray-100' : 'cursor-pointer'}`}
                 onClick={toggleDropdown}
             >
                 <div className="flex flex-wrap">

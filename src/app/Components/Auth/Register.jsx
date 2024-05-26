@@ -55,7 +55,6 @@ const Register = () => {
     try {
       const response = await registerUser(jsonData);
       const responseData = response.data; // Assuming response is already JSON parsed
-
       if (responseData["status code"] === 200) {
         toast.success(responseData.message || "Registration Successful");
       } else {

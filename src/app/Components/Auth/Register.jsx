@@ -67,23 +67,23 @@ const Register = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-[90vh]">
       {/* Image Container */}
       <div className="w-1/2">
         <img
           src={backgroundImage}
-          alt="Login"
+          alt="SignUp"
           className="object-cover w-full h-full"
         />
       </div>
       {/* Form Container */}
-      <div className="flex items-center justify-center w-1/2 p-12 bg-white">
+      <div className="flex justify-center w-1/2 px-12 py-6 bg-white">
         <div className="w-full max-w-md">
           {/* Button to route to "/erepo" */}
           <h2 className="text-3xl font-bold text-center">Sign Up</h2>
 
           <>
-            <div className="mt-6">
+            <div className="mt-4">
               <input
                 type="text"
                 placeholder="Enter your First Name"
@@ -93,7 +93,7 @@ const Register = () => {
                 required
               />
             </div>
-            <div className="mt-6">
+            <div className="mt-4">
               <input
                 type="text"
                 placeholder="Enter your Last Name"
@@ -103,7 +103,7 @@ const Register = () => {
                 required
               />
             </div>
-            <div className="mt-6">
+            <div className="mt-4">
               <select
                 className="w-full px-4 py-3 border rounded"
                 value={userType}
@@ -115,7 +115,7 @@ const Register = () => {
                 <option value="scholar">Scholar</option>
               </select>
             </div>
-            <div className="mt-6">
+            <div className="mt-4">
               <input
                 type="text"
                 placeholder="Enter your Department"
@@ -125,7 +125,7 @@ const Register = () => {
                 required
               />
             </div>
-            <div className="mt-6">
+            <div className="mt-4">
               <input
                 type="text"
                 placeholder="Enter your Roll Number"
@@ -137,7 +137,7 @@ const Register = () => {
               />
             </div>
 
-            <div className="mt-6">
+            <div className="mt-4">
               <select
                 className="w-full px-4 py-3 border rounded"
                 value={supervisor}
@@ -156,7 +156,7 @@ const Register = () => {
               </select>
             </div>
           </>
-          <div className="mt-6">
+          <div className="mt-4">
             <input
               type="email"
               placeholder="Enter your Email"
@@ -189,7 +189,7 @@ const Register = () => {
           </div>
 
           <button
-            className="w-full py-3 mt-6 text-white bg-blue-500 rounded hover:bg-blue-600"
+            className="w-full py-3 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
             onClick={handleSignup}
           >
             {"Sign Up"}

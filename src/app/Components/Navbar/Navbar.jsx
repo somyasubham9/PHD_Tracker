@@ -73,6 +73,9 @@ function Navbar() {
         <div className="navbar">
           <Link to="#" className="menu-bars">
             <FaBarsStaggered onClick={showSidebar} color="black" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 text-xxl font-bold ml-4">
+              PHD Tracks
+            </span>
             <div onClick={toggleDropdown}>
               <PiDotsThreeBold color="black" />
               {dropdown && (

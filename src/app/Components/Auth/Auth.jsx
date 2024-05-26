@@ -179,7 +179,11 @@ const AuthPage = () => {
             E-Repository
           </button>
 
-          <h2 className="text-3xl font-bold text-center">Login</h2>
+          <h1 className="text-6xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 mb-12">
+            PHD Tracks
+          </h1>
+
+          <h2 className="text-4xl text-slate-700 font-bold text-center">Login</h2>
 
           <div className="mt-6">
             <input

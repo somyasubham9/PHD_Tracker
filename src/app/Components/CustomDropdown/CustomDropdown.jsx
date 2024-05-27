@@ -35,7 +35,9 @@ const CustomDropdown = ({ options, selectedValues, onChange, isSet }) => {
                         if (!selectedOption) return null;
                         return (
                             <span key={selectedOption.id} className="mr-2 bg-blue-200 text-blue-700 rounded-md px-2 py-2">
-                                {selectedOption.first_name} {selectedOption.last_name}
+                                <a href={selectedOption.profile_url} target="_blank" rel="noopener noreferrer">
+                                    {selectedOption.first_name} {selectedOption.last_name}
+                                </a>
                                 {!isSet && (
                                     <button
                                         onClick={(e) => {

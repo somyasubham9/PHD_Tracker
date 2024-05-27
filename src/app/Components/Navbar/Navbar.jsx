@@ -113,7 +113,7 @@ function Navbar() {
               })}
             {isAdmin &&
               AdminSidebarData.map((item, index) => {
-                if (index === 2 && initialState.userType === 'professor')
+                if ((index === 2 || index === 3 || index === 4) && initialState.userType === 'professor')
                 {
                   return;
                 }

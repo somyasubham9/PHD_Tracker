@@ -60,6 +60,8 @@ import StudentProfile from "./app/Components/Profile/AdminProfile";
 import ERepo from "./app/Page/ERepo/ERepo";
 import { ToastContainer } from "react-toastify";
 import Register from "./app/Components/Auth/Register";
+import DSCCommitteeRegister from "./app/Components/DSCCommittee/DSCCommitteeRegister.jsx";
+import ExaminerRegistration from "./app/Components/Examiner/ExaminerRegistration.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -84,7 +86,9 @@ function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/erepo" element={<ERepo />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/register" element={<Register/>}/>
+            <Route path="/register" element={<Register />} />
+            <Route path="/dsc/register" element={<DSCCommitteeRegister />} />
+            <Route path="/examiner/register" element={<ExaminerRegistration />} />
             <Route path="/studentlist" element={<StudentList />} />
             <Route path="/" element={<HomePage />} />
             <Route path="/form1A" element={<Form1ALayout />} />

@@ -119,8 +119,16 @@ const StudentProfile = () => {
 
   useEffect(() => {
     const fetchDSCCommitteeList = async () => {
-      const res = await axios.get("http://127.0.0.1:8000/api/professor/list/");
-      // console.log(res.data.data);
+      const token = sessionStorage.getItem("access");
+      if (!token) {
+        console.error("No access token found in session storage");
+        return;
+      }
+      const res = await axios.get("http://127.0.0.1:8000/api/dsc/committee/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setDscCommitteeList(res.data.data);
     };
     fetchDSCCommitteeList();
@@ -466,11 +474,11 @@ const StudentProfile = () => {
               </button>
             </div>)}
             {/* Indian Examiner Details */}
-            {isIndianExaminer && (<div className="mt-4 bg-white p-4 shadow-md rounded-lg">
+            {isIndianExaminer && (initialState.userType === 'admin' || initialState.userType === 'co-admin' || ((initialState.userType === 'scholar' || initialState.userType === 'professor') && (userProfile.data.comments_by_indian))) && (<div className="mt-4 bg-white p-4 shadow-md rounded-lg">
               <h4 className="text-xl font-semibold text-blue-700">
                 Indian Examiner Details
               </h4>
-              <p>Name: {studentIndianExaminer?.name}</p>
+              <p>Name: <a href={studentIndianExaminer?.profile_url} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }}>{studentIndianExaminer?.name}</a></p>
               <p>Designation: {studentIndianExaminer?.designation}</p>
               <p>Institute: {studentIndianExaminer?.institute}</p>
               <p>Email: {studentIndianExaminer?.email}</p>
@@ -491,7 +499,7 @@ const StudentProfile = () => {
             </div>)}
 
             {/* Foreign Examiner Dropdown */}
-            {isForeignExaminer === false && (<div className="mt-4 bg-white p-4 shadow-md rounded-lg">
+            {isForeignExaminer === false  && (<div className="mt-4 bg-white p-4 shadow-md rounded-lg">
               <h4 className="text-xl font-semibold text-blue-700">
                 Foreign Examiner
               </h4>
@@ -515,11 +523,11 @@ const StudentProfile = () => {
               </button>
             </div>)}
             {/* Foreign Examiner Details */}
-            {isForeignExaminer && (<div className="mt-4 bg-white p-4 shadow-md rounded-lg">
+            {isForeignExaminer && (initialState.userType === 'admin' || initialState.userType === 'co-admin' || ((initialState.userType === 'scholar' || initialState.userType === 'professor') && (userProfile.data.comments_by_foreign))) && (<div className="mt-4 bg-white p-4 shadow-md rounded-lg">
               <h4 className="text-xl font-semibold text-blue-700">
                 Foreign Examiner Details
               </h4>
-              <p>Name: {studentForeignExaminer?.name}</p>
+              <p>Name: <a href={studentForeignExaminer?.profile_url} target="_blank" rel="noopener noreferrer" style={{ color: 'blue' }} >{studentForeignExaminer?.name}</a></p>
               <p>Designation: {studentForeignExaminer?.designation}</p>
               <p>Institute: {studentForeignExaminer?.institute}</p>
               <p>Email: {studentForeignExaminer?.email}</p>

@@ -21,6 +21,18 @@ export const AdminSidebarData = [
     icon: <IoIcons.IoIosPaper color='black' />,
     cName: 'nav-text'
   },
+  {
+    title: 'DSC Register',
+    path: '/dsc/register',
+    icon: <IoIcons.IoIosPaper color='black' />,
+    cName: 'nav-text'
+  },
+  {
+    title: 'Examiner Register',
+    path: '/examiner/register',
+    icon: <IoIcons.IoIosPaper color='black' />,
+    cName: 'nav-text'
+  },
 
 
 ];
